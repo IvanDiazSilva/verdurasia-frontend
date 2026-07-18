@@ -1,0 +1,241 @@
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { ProductoService } from '../../../core/services/producto.service';
+import { Producto } from '../../../core/models/producto.model';
+import { Page } from '../../../core/models/page.model';
+
+@Component({
+  selector: 'app-productos-list',
+  standalone: true,
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  template: `
+    <div class="page-header">
+      <h2 class="page-title">Productos</h2>
+      <a routerLink="nuevo" class="btn btn--primary">+ Nuevo producto</a>
+    </div>
+
+    <!-- Filtro de búsqueda -->
+    <div class="filters">
+      <input
+        class="input"
+        type="text"
+        placeholder="Buscar por nombre..."
+        [formControl]="busquedaCtrl"
+      />
+    </div>
+
+    <!-- Estado de carga / error -->
+    @if (cargando()) {
+      <div class="state-msg">Cargando productos...</div>
+    } @else if (error()) {
+      <div class="state-msg state-msg--error">{{ error() }}</div>
+    } @else if (page()?.content?.length === 0) {
+      <div class="state-msg">No hay productos registrados.</div>
+    } @else {
+      <!-- Tabla -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th class="text-right">Precio</th>
+              <th class="text-right">Stock</th>
+              <th>Unidad</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of page()!.content; track p.id) {
+              <tr>
+                <td class="td--nombre">{{ p.nombre }}</td>
+                <td>{{ p.categoriaNombre ?? '—' }}</td>
+                <td class="text-right">{{ p.precio | number:'1.2-2' }} €</td>
+                <td class="text-right">{{ p.stock }}</td>
+                <td>{{ p.unidad }}</td>
+                <td>
+                  <span class="badge" [class.badge--activo]="p.activo" [class.badge--inactivo]="!p.activo">
+                    {{ p.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn btn--ghost btn--sm" (click)="eliminar(p)" title="Eliminar">✕</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      @if (page()!.totalPages > 1) {
+        <div class="pagination">
+          <button class="btn btn--ghost btn--sm" [disabled]="page()!.first" (click)="cambiarPagina(paginaActual() - 1)">
+            ← Anterior
+          </button>
+          <span class="pagination__info">
+            Página {{ page()!.number + 1 }} de {{ page()!.totalPages }}
+            ({{ page()!.totalElements }} productos)
+          </span>
+          <button class="btn btn--ghost btn--sm" [disabled]="page()!.last" (click)="cambiarPagina(paginaActual() + 1)">
+            Siguiente →
+          </button>
+        </div>
+      }
+    }
+  `,
+  styles: [`
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .page-title { font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0; }
+
+    .filters { margin-bottom: 1rem; }
+    .input {
+      width: 280px;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input:focus { border-color: #2d6a4f; }
+
+    .state-msg {
+      padding: 2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .state-msg--error { color: #c0392b; }
+
+    .table-wrapper {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .table thead { background: #f9fafb; }
+    .table th {
+      padding: 0.65rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+    .table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid #f3f4f6;
+      color: #374151;
+    }
+    .table tbody tr:last-child td { border-bottom: none; }
+    .table tbody tr:hover { background: #f9fafb; }
+    .td--nombre { font-weight: 500; }
+    .text-right { text-align: right; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge--activo  { background: #d1fae5; color: #065f46; }
+    .badge--inactivo { background: #fee2e2; color: #991b1b; }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .pagination__info { font-size: 0.875rem; color: #6b7280; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn--primary  { background: #2d6a4f; color: #fff; }
+    .btn--primary:hover { background: #1b4332; }
+    .btn--ghost { background: transparent; border: 1px solid #d1d5db; color: #374151; }
+    .btn--ghost:hover { background: #f3f4f6; }
+    .btn--sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
+  `]
+})
+export class ProductosListComponent implements OnInit {
+  private readonly productoService = inject(ProductoService);
+
+  page    = signal<Page<Producto> | null>(null);
+  cargando = signal(false);
+  error    = signal<string | null>(null);
+  paginaActual = signal(0);
+
+  busquedaCtrl = new FormControl('');
+
+  ngOnInit(): void {
+    this.cargar();
+
+    this.busquedaCtrl.valueChanges.pipe(
+      debounceTime(350),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.paginaActual.set(0);
+      this.cargar();
+    });
+  }
+
+  cambiarPagina(pagina: number): void {
+    this.paginaActual.set(pagina);
+    this.cargar();
+  }
+
+  eliminar(p: Producto): void {
+    if (!confirm(`¿Eliminar "${p.nombre}"?`)) return;
+    this.productoService.eliminar(p.id).subscribe({
+      next: () => this.cargar(),
+      error: (e) => this.error.set(e.message)
+    });
+  }
+
+  private cargar(): void {
+    this.cargando.set(true);
+    this.error.set(null);
+    const nombre = this.busquedaCtrl.value ?? undefined;
+    this.productoService.listar(this.paginaActual(), 20, nombre || undefined).subscribe({
+      next: (data) => {
+        this.page.set(data);
+        this.cargando.set(false);
+      },
+      error: (e) => {
+        this.error.set(e.message ?? 'Error al cargar productos');
+        this.cargando.set(false);
+      }
+    });
+  }
+}

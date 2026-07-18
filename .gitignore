@@ -1,0 +1,88 @@
+# ============================================================
+# Compiled output / build artifacts
+# ============================================================
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# ============================================================
+# Node
+# ============================================================
+/node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+*.log
+logs/
+
+# ============================================================
+# Angular cache
+# ============================================================
+/.angular/cache
+/.angular/
+
+# ============================================================
+# Test coverage
+# ============================================================
+/coverage
+__screenshots__/
+testem.log
+
+# ============================================================
+# Temporary / misc
+# ============================================================
+/tmp
+/typings
+/connect.lock
+/libpeerconnection.log
+.sass-cache/
+
+# ============================================================
+# Environment — archivos con credenciales reales
+# ============================================================
+# Los archivos environment.ts y environment.prod.ts del proyecto
+# NO contienen secretos (solo URLs relativas), así que SÍ se suben.
+# Si en el futuro añades API keys u otros secretos, crea
+# src/environments/environment.local.ts y añádelo aquí:
+# src/environments/environment.local.ts
+
+# Archivos .env genéricos (por si se usan en el futuro)
+.env
+.env.*
+!.env.example
+
+# ============================================================
+# IDEs y editores
+# ============================================================
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+*.iml
+*.iws
+*.ipr
+out/
+nbactions.xml
+nb-configuration.xml
+
+# Visual Studio Code — se conservan settings compartidos de equipo
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# ============================================================
+# Sistema operativo
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
