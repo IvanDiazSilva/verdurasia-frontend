@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Silent SSO Check</title>
+  </head>
+  <body>
+    <script>
+      // Página mínima requerida por keycloak-js para la renovación silenciosa de sesión.
+      // Keycloak la carga en un iframe oculto y espera este mensaje.
+      parent.postMessage(location.href, location.origin);
+    </script>
+  </body>
+</html>

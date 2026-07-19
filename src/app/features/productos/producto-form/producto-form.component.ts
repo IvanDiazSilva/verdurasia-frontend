@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductoService } from '../../../core/services/producto.service';
 import { CategoriaService } from '../../../core/services/categoria.service';
@@ -12,9 +12,17 @@ import { Categoria } from '../../../core/models/categoria.model';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="page-header">
-      <h2 class="page-title">Nuevo producto</h2>
+      <h2 class="page-title">{{ esEdicion() ? 'Editar producto' : 'Nuevo producto' }}</h2>
       <a routerLink="/productos" class="btn btn--ghost btn--sm">← Volver</a>
     </div>
+
+    @if (cargandoProducto()) {
+      <div class="state-msg">Cargando producto...</div>
+    } @else if (errorCarga()) {
+      <div class="state-msg state-msg--error">{{ errorCarga() }}</div>
+    }
+
+    @if (!cargandoProducto() && !errorCarga()) {
 
     @if (errorGlobal()) {
       <div class="alert alert--error" role="alert">
@@ -138,13 +146,15 @@ import { Categoria } from '../../../core/models/categoria.model';
         <!-- Acciones -->
         <div class="form-actions">
           <button type="submit" class="btn btn--primary" [disabled]="guardando() || (form.invalid && form.touched)">
-            {{ guardando() ? 'Guardando...' : 'Guardar producto' }}
+            {{ guardando() ? 'Guardando...' : (esEdicion() ? 'Guardar cambios' : 'Guardar producto') }}
           </button>
           <a routerLink="/productos" class="btn btn--ghost">Cancelar</a>
         </div>
 
       </form>
     </div>
+
+    } <!-- fin @if !cargandoProducto -->
   `,
   styles: [`
     .page-header {
@@ -218,6 +228,7 @@ import { Categoria } from '../../../core/models/categoria.model';
     }
 
     .state-msg { font-size: 0.875rem; color: #6b7280; padding: 0.5rem 0; }
+    .state-msg--error { color: #c0392b; }
 
     .form-actions {
       display: flex;
@@ -247,10 +258,11 @@ import { Categoria } from '../../../core/models/categoria.model';
   `]
 })
 export class ProductoFormComponent implements OnInit {
-  private readonly fb              = inject(FormBuilder);
-  private readonly productoService = inject(ProductoService);
+  private readonly fb               = inject(FormBuilder);
+  private readonly productoService  = inject(ProductoService);
   private readonly categoriaService = inject(CategoriaService);
-  private readonly router          = inject(Router);
+  private readonly router           = inject(Router);
+  private readonly route            = inject(ActivatedRoute);
 
   form = this.fb.group({
     nombre:      ['', [Validators.required, Validators.minLength(2), Validators.maxLength(150)]],
@@ -261,14 +273,26 @@ export class ProductoFormComponent implements OnInit {
     categoriaId: [null as number | null]
   });
 
-  categorias        = signal<Categoria[]>([]);
+  categorias         = signal<Categoria[]>([]);
   cargandoCategorias = signal(false);
-  errorCategorias   = signal<string | null>(null);
-  guardando         = signal(false);
-  errorGlobal       = signal<string | null>(null);
+  errorCategorias    = signal<string | null>(null);
+  guardando          = signal(false);
+  errorGlobal        = signal<string | null>(null);
+  esEdicion          = signal(false);
+  productoId         = signal<number | null>(null);
+  cargandoProducto   = signal(false);
+  errorCarga         = signal<string | null>(null);
 
   ngOnInit(): void {
     this.cargarCategorias();
+
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      const id = Number(idParam);
+      this.esEdicion.set(true);
+      this.productoId.set(id);
+      this.cargarProducto(id);
+    }
   }
 
   /** Devuelve el AbstractControl de un campo del formulario. */
@@ -283,12 +307,9 @@ export class ProductoFormComponent implements OnInit {
   }
 
   guardar(): void {
-    // Marcar todos los campos como tocados para activar los mensajes de error inline
     this.form.markAllAsTouched();
-
-    // Guardia de validación en el método: nunca llama a la API si el form es inválido
     if (this.form.invalid) {
-      this.errorGlobal.set(null); // limpiar cualquier error previo del backend
+      this.errorGlobal.set(null);
       return;
     }
 
@@ -296,18 +317,46 @@ export class ProductoFormComponent implements OnInit {
     this.errorGlobal.set(null);
 
     const val = this.form.getRawValue();
-    this.productoService.crear({
+    const payload = {
       nombre:      val.nombre!,
       descripcion: val.descripcion || undefined,
       precio:      val.precio!,
       stock:       val.stock!,
       unidad:      val.unidad!,
       categoriaId: val.categoriaId ?? null
-    }).subscribe({
+    };
+
+    const op$ = this.esEdicion() && this.productoId() !== null
+      ? this.productoService.actualizar(this.productoId()!, payload)
+      : this.productoService.crear(payload);
+
+    op$.subscribe({
       next: () => this.router.navigate(['/productos']),
       error: (e: { message?: string }) => {
         this.errorGlobal.set(e.message ?? 'Error inesperado al guardar el producto. Inténtalo de nuevo.');
         this.guardando.set(false);
+      }
+    });
+  }
+
+  private cargarProducto(id: number): void {
+    this.cargandoProducto.set(true);
+    this.errorCarga.set(null);
+    this.productoService.obtener(id).subscribe({
+      next: (p) => {
+        this.form.patchValue({
+          nombre:      p.nombre,
+          descripcion: p.descripcion ?? '',
+          precio:      p.precio,
+          stock:       p.stock,
+          unidad:      p.unidad,
+          categoriaId: p.categoriaId ?? null
+        });
+        this.cargandoProducto.set(false);
+      },
+      error: (e: { message?: string }) => {
+        this.errorCarga.set(e.message ?? 'No se pudo cargar el producto.');
+        this.cargandoProducto.set(false);
       }
     });
   }

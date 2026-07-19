@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ProductoService } from '../../../core/services/producto.service';
 import { Producto } from '../../../core/models/producto.model';
 import { Page } from '../../../core/models/page.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-productos-list',
@@ -14,7 +15,9 @@ import { Page } from '../../../core/models/page.model';
   template: `
     <div class="page-header">
       <h2 class="page-title">Productos</h2>
-      <a routerLink="nuevo" class="btn btn--primary">+ Nuevo producto</a>
+      @if (auth.isAdmin()) {
+        <a routerLink="nuevo" class="btn btn--primary">+ Nuevo producto</a>
+      }
     </div>
 
     <!-- Filtro de búsqueda -->
@@ -42,8 +45,8 @@ import { Page } from '../../../core/models/page.model';
             <tr>
               <th>Nombre</th>
               <th>Categoría</th>
-              <th class="text-right">Precio</th>
-              <th class="text-right">Stock</th>
+              <th>Precio</th>
+              <th>Stock</th>
               <th>Unidad</th>
               <th>Estado</th>
               <th></th>
@@ -54,16 +57,19 @@ import { Page } from '../../../core/models/page.model';
               <tr>
                 <td class="td--nombre">{{ p.nombre }}</td>
                 <td>{{ p.categoriaNombre ?? '—' }}</td>
-                <td class="text-right">{{ p.precio | number:'1.2-2' }} €</td>
-                <td class="text-right">{{ p.stock }}</td>
+                <td>{{ p.precio | number:'1.2-2' }} €</td>
+                <td>{{ p.stock }}</td>
                 <td>{{ p.unidad }}</td>
                 <td>
                   <span class="badge" [class.badge--activo]="p.activo" [class.badge--inactivo]="!p.activo">
                     {{ p.activo ? 'Activo' : 'Inactivo' }}
                   </span>
                 </td>
-                <td>
-                  <button class="btn btn--ghost btn--sm" (click)="eliminar(p)" title="Eliminar">✕</button>
+                <td class="td--actions">
+                  @if (auth.isAdmin()) {
+                    <a [routerLink]="[p.id, 'editar']" class="btn btn--ghost btn--sm" title="Editar">Editar</a>
+                    <button class="btn btn--ghost btn--sm btn--danger" (click)="eliminar(p)" title="Eliminar">✕</button>
+                  }
                 </td>
               </tr>
             }
@@ -185,11 +191,14 @@ import { Page } from '../../../core/models/page.model';
     .btn--primary:hover { background: #1b4332; }
     .btn--ghost { background: transparent; border: 1px solid #d1d5db; color: #374151; }
     .btn--ghost:hover { background: #f3f4f6; }
+    .btn--danger:hover { border-color: #ef4444; color: #ef4444; background: #fee2e2; }
     .btn--sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
+    .td--actions { display: flex; gap: 0.4rem; align-items: center; }
   `]
 })
 export class ProductosListComponent implements OnInit {
   private readonly productoService = inject(ProductoService);
+  readonly auth = inject(AuthService);
 
   page    = signal<Page<Producto> | null>(null);
   cargando = signal(false);

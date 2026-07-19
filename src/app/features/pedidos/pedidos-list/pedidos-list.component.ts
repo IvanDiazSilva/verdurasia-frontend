@@ -1,11 +1,282 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { PedidoService } from '../../../core/services/pedido.service';
+import {
+  Pedido,
+  EstadoPedido,
+  ESTADOS_PEDIDO,
+  ESTADO_LABEL,
+} from '../../../core/models/pedido.model';
+import { Page } from '../../../core/models/page.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-pedidos-list',
   standalone: true,
+  imports: [CommonModule, RouterLink],
   template: `
-    <h2>Pedidos</h2>
-    <p>Listado de pedidos — se implementará en la Fase 2.</p>
-  `
+    <div class="page-header">
+      <h2 class="page-title">Pedidos</h2>
+      @if (auth.isAdmin()) {
+        <a routerLink="nuevo" class="btn btn--primary">+ Nuevo pedido</a>
+      }
+    </div>
+
+    @if (cargando()) {
+      <div class="state-msg">Cargando pedidos...</div>
+    } @else if (error()) {
+      <div class="state-msg state-msg--error">{{ error() }}</div>
+    } @else if (page()?.content?.length === 0) {
+      <div class="state-msg">No hay pedidos registrados.</div>
+    } @else {
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Cliente</th>
+              <th>Estado</th>
+              <th class="text-right">Total</th>
+              <th>Líneas</th>
+              <th>Fecha</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of page()!.content; track p.id) {
+              <tr>
+                <td class="td--id">{{ p.id }}</td>
+                <td class="td--nombre">{{ p.clienteNombre }}</td>
+                <td>
+                  @if (auth.isAdmin() && cambiandoEstado() === p.id) {
+                    <select
+                      class="select-estado"
+                      [value]="p.estado"
+                      (change)="onCambioEstado(p, $event)"
+                      (blur)="cambiandoEstado.set(null)"
+                    >
+                      @for (e of estados; track e) {
+                        <option [value]="e">{{ etiqueta(e) }}</option>
+                      }
+                    </select>
+                  } @else {
+                    <span
+                      class="badge"
+                      [ngClass]="'badge--' + p.estado"
+                      [style.cursor]="auth.isAdmin() ? 'pointer' : 'default'"
+                      [title]="auth.isAdmin() ? 'Clic para cambiar estado' : ''"
+                      (click)="auth.isAdmin() && cambiandoEstado.set(p.id)"
+                    >
+                      {{ etiqueta(p.estado) }}
+                    </span>
+                  }
+                </td>
+                <td class="text-right">{{ p.total | number:'1.2-2' }} €</td>
+                <td>{{ p.items.length }} artículo{{ p.items.length === 1 ? '' : 's' }}</td>
+                <td class="td--fecha">{{ p.createdAt | date:'dd/MM/yyyy' }}</td>
+                <td class="td--actions">
+                  <a [routerLink]="[p.id]" class="btn btn--ghost btn--sm" title="Ver detalle">Ver</a>
+                  @if (auth.isAdmin()) {
+                    <button
+                      class="btn btn--ghost btn--sm btn--danger"
+                      (click)="eliminar(p)"
+                      title="Eliminar"
+                    >✕</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (page()!.totalPages > 1) {
+        <div class="pagination">
+          <button class="btn btn--ghost btn--sm" [disabled]="page()!.first" (click)="cambiarPagina(paginaActual() - 1)">
+            ← Anterior
+          </button>
+          <span class="pagination__info">
+            Página {{ page()!.number + 1 }} de {{ page()!.totalPages }}
+            ({{ page()!.totalElements }} pedidos)
+          </span>
+          <button class="btn btn--ghost btn--sm" [disabled]="page()!.last" (click)="cambiarPagina(paginaActual() + 1)">
+            Siguiente →
+          </button>
+        </div>
+      }
+    }
+  `,
+  styles: [`
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .page-title { font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0; }
+
+    .state-msg {
+      padding: 2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .state-msg--error { color: #c0392b; }
+
+    .table-wrapper {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .table thead { background: #f9fafb; }
+    .table th {
+      padding: 0.65rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+    .table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid #f3f4f6;
+      color: #374151;
+      vertical-align: middle;
+    }
+    .table tbody tr:last-child td { border-bottom: none; }
+    .table tbody tr:hover { background: #f9fafb; }
+
+    .td--id { color: #9ca3af; font-size: 0.8rem; font-weight: 500; }
+    .td--nombre { font-weight: 500; }
+    .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
+    .td--actions { display: flex; gap: 0.4rem; align-items: center; }
+    .text-right { text-align: right; }
+
+    /* Estado badges */
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge--PENDIENTE      { background: #fef3c7; color: #92400e; }
+    .badge--CONFIRMADO     { background: #dbeafe; color: #1e40af; }
+    .badge--EN_PREPARACION { background: #ede9fe; color: #5b21b6; }
+    .badge--ENVIADO        { background: #d1fae5; color: #065f46; }
+    .badge--ENTREGADO      { background: #d1fae5; color: #065f46; }
+    .badge--CANCELADO      { background: #fee2e2; color: #991b1b; }
+
+    .select-estado {
+      padding: 0.2rem 0.4rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      outline: none;
+      background: #fff;
+    }
+    .select-estado:focus { border-color: #2d6a4f; }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .pagination__info { font-size: 0.875rem; color: #6b7280; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn--primary  { background: #2d6a4f; color: #fff; }
+    .btn--primary:hover { background: #1b4332; }
+    .btn--ghost { background: transparent; border: 1px solid #d1d5db; color: #374151; }
+    .btn--ghost:hover { background: #f3f4f6; }
+    .btn--danger:hover { border-color: #ef4444; color: #ef4444; background: #fee2e2; }
+    .btn--sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
+  `]
 })
-export class PedidosListComponent {}
+export class PedidosListComponent implements OnInit {
+  private readonly pedidoService = inject(PedidoService);
+  readonly auth = inject(AuthService);
+
+  page         = signal<Page<Pedido> | null>(null);
+  cargando     = signal(false);
+  error        = signal<string | null>(null);
+  paginaActual = signal(0);
+  /** ID del pedido cuyo estado se está editando inline (null = ninguno). */
+  cambiandoEstado = signal<number | null>(null);
+
+  readonly estados = ESTADOS_PEDIDO;
+  readonly etiqueta = (e: EstadoPedido) => ESTADO_LABEL[e];
+
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  cambiarPagina(pagina: number): void {
+    this.paginaActual.set(pagina);
+    this.cargar();
+  }
+
+  onCambioEstado(pedido: Pedido, event: Event): void {
+    const nuevoEstado = (event.target as HTMLSelectElement).value as EstadoPedido;
+    if (nuevoEstado === pedido.estado) {
+      this.cambiandoEstado.set(null);
+      return;
+    }
+    this.pedidoService.cambiarEstado(pedido.id, { estado: nuevoEstado }).subscribe({
+      next: () => {
+        this.cambiandoEstado.set(null);
+        this.cargar();
+      },
+      error: (e) => {
+        this.error.set(e.message ?? 'Error al cambiar el estado del pedido.');
+        this.cambiandoEstado.set(null);
+      }
+    });
+  }
+
+  eliminar(p: Pedido): void {
+    if (!confirm(`¿Eliminar el pedido #${p.id} de "${p.clienteNombre}"? Esta acción no se puede deshacer.`)) return;
+    this.pedidoService.eliminar(p.id).subscribe({
+      next: () => this.cargar(),
+      error: (e) => this.error.set(e.message ?? 'Error al eliminar el pedido.')
+    });
+  }
+
+  private cargar(): void {
+    this.cargando.set(true);
+    this.error.set(null);
+    this.pedidoService.listar(this.paginaActual(), 20).subscribe({
+      next: (data) => {
+        this.page.set(data);
+        this.cargando.set(false);
+      },
+      error: (e) => {
+        this.error.set(e.message ?? 'Error al cargar pedidos.');
+        this.cargando.set(false);
+      }
+    });
+  }
+}
