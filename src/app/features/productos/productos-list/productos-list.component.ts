@@ -8,11 +8,12 @@ import { Producto } from '../../../core/models/producto.model';
 import { Page } from '../../../core/models/page.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { ListStateComponent } from '../../../shared/components/list-state/list-state.component';
 
 @Component({
   selector: 'app-productos-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, PaginationComponent],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, PaginationComponent, ListStateComponent],
   template: `
     <div class="page-header">
       <h2 class="page-title">Productos</h2>
@@ -32,13 +33,14 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
     </div>
 
     <!-- Estado de carga / error -->
-    @if (cargando()) {
-      <div class="state-msg">Cargando productos...</div>
-    } @else if (error()) {
-      <div class="state-msg state-msg--error">{{ error() }}</div>
-    } @else if (page()?.content?.length === 0) {
-      <div class="state-msg">No hay productos registrados.</div>
-    } @else {
+    <app-list-state
+      [cargando]="cargando()"
+      [error]="error()"
+      [vacio]="page()?.content?.length === 0"
+      mensajeVacio="No hay productos registrados."
+    />
+
+    @if (!cargando() && !error() && page()?.content?.length! > 0) {
       <!-- Tabla -->
       <div class="table-wrapper">
         <table class="table">
@@ -102,14 +104,6 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
       transition: border-color 0.15s;
     }
     .input:focus { border-color: #2d6a4f; }
-
-    .state-msg {
-      padding: 2rem;
-      text-align: center;
-      color: #666;
-      font-size: 0.9rem;
-    }
-    .state-msg--error { color: #c0392b; }
 
     .table-wrapper {
       background: #fff;
