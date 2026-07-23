@@ -191,13 +191,6 @@ import { AuthService } from '../../../core/services/auth.service';
     .tfoot-label { font-weight: 600; color: #374151; }
     .text-right { text-align: right; }
 
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
     .badge--PENDIENTE      { background: #fef3c7; color: #92400e; }
     .badge--CONFIRMADO     { background: #dbeafe; color: #1e40af; }
     .badge--EN_PREPARACION { background: #ede9fe; color: #5b21b6; }
