@@ -217,14 +217,6 @@ interface Tarjeta {
     .td--nombre { font-weight: 500; }
     .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
 
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
     .badge--PENDIENTE      { background: #fef3c7; color: #92400e; }
     .badge--CONFIRMADO     { background: #dbeafe; color: #1e40af; }
     .badge--EN_PREPARACION { background: #ede9fe; color: #5b21b6; }

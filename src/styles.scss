@@ -86,3 +86,13 @@ h1, h2, h3 {
 .td--actions { display: flex; gap: 0.4rem; align-items: center; }
 .td--nombre { font-weight: 500; }
 .text-right { text-align: right; }
+
+/* Estilo base de badge reutilizable — las variantes de color quedan en cada feature */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
