@@ -97,13 +97,6 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     }
     .input:focus { border-color: #2d6a4f; }
 
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.55rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
     .badge--activo  { background: #d1fae5; color: #065f46; }
     .badge--inactivo { background: #fee2e2; color: #991b1b; }
 
