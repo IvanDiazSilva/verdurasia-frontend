@@ -181,13 +181,7 @@ import { Producto } from '../../../core/models/producto.model';
     </div>
   `,
   styles: [`
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-    }
-    .page-title { font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0; }
+
 
     .alert {
       padding: 0.75rem 1rem;
