@@ -127,13 +127,7 @@ import { ClienteService } from '../../../core/services/cliente.service';
     }
   `,
   styles: [`
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-    }
-    .page-title { font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0; }
+
 
     .state-msg {
       padding: 2rem;
