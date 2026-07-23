@@ -7,11 +7,12 @@ import { ProductoService } from '../../../core/services/producto.service';
 import { Producto } from '../../../core/models/producto.model';
 import { Page } from '../../../core/models/page.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-productos-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, PaginationComponent],
   template: `
     <div class="page-header">
       <h2 class="page-title">Productos</h2>
@@ -78,20 +79,7 @@ import { AuthService } from '../../../core/services/auth.service';
       </div>
 
       <!-- Paginación -->
-      @if (page()!.totalPages > 1) {
-        <div class="pagination">
-          <button class="btn btn--ghost btn--sm" [disabled]="page()!.first" (click)="cambiarPagina(paginaActual() - 1)">
-            ← Anterior
-          </button>
-          <span class="pagination__info">
-            Página {{ page()!.number + 1 }} de {{ page()!.totalPages }}
-            ({{ page()!.totalElements }} productos)
-          </span>
-          <button class="btn btn--ghost btn--sm" [disabled]="page()!.last" (click)="cambiarPagina(paginaActual() + 1)">
-            Siguiente →
-          </button>
-        </div>
-      }
+      <app-pagination [page]="page()!" itemLabel="productos" (pageChange)="cambiarPagina($event)" />
     }
   `,
   styles: [`
@@ -162,15 +150,6 @@ import { AuthService } from '../../../core/services/auth.service';
     }
     .badge--activo  { background: #d1fae5; color: #065f46; }
     .badge--inactivo { background: #fee2e2; color: #991b1b; }
-
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .pagination__info { font-size: 0.875rem; color: #6b7280; }
 
     /* Buttons */
     .btn {
