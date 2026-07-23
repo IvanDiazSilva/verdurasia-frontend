@@ -95,44 +95,11 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     }
     .input:focus { border-color: #2d6a4f; }
 
-    .table-wrapper {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-    .table thead { background: #f9fafb; }
-    .table th {
-      padding: 0.65rem 1rem;
-      text-align: left;
-      font-weight: 600;
-      color: #374151;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: nowrap;
-    }
-    .table td {
-      padding: 0.65rem 1rem;
-      border-bottom: 1px solid #f3f4f6;
-      color: #374151;
-    }
-    .table tbody tr:last-child td { border-bottom: none; }
-    .table tbody tr:hover { background: #f9fafb; }
-    .td--nombre { font-weight: 500; }
     .td--direccion {
       max-width: 200px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-    .td--actions {
-      display: flex;
-      gap: 0.4rem;
-      align-items: center;
     }
 
     .badge {
