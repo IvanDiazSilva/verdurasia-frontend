@@ -6,11 +6,12 @@ import { Oferta, TIPO_OFERTA_LABEL } from '../../../core/models/oferta.model';
 import { Page } from '../../../core/models/page.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { ListStateComponent } from '../../../shared/components/list-state/list-state.component';
 
 @Component({
   selector: 'app-ofertas-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, PaginationComponent],
+  imports: [CommonModule, RouterLink, PaginationComponent, ListStateComponent],
   template: `
     <div class="page-header">
       <h2 class="page-title">Ofertas</h2>
@@ -19,13 +20,14 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
       }
     </div>
 
-    @if (cargando()) {
-      <div class="state-msg">Cargando ofertas...</div>
-    } @else if (error()) {
-      <div class="state-msg state-msg--error">{{ error() }}</div>
-    } @else if (page()?.content?.length === 0) {
-      <div class="state-msg">No hay ofertas registradas.</div>
-    } @else {
+    <app-list-state
+      [cargando]="cargando()"
+      [error]="error()"
+      [vacio]="page()?.content?.length === 0"
+      mensajeVacio="No hay ofertas registradas."
+    />
+
+    @if (!cargando() && !error() && page()?.content?.length! > 0) {
       <div class="table-wrapper">
         <table class="table">
           <thead>
@@ -91,14 +93,6 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
       margin-bottom: 1.25rem;
     }
     .page-title { font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin: 0; }
-
-    .state-msg {
-      padding: 2rem;
-      text-align: center;
-      color: #666;
-      font-size: 0.9rem;
-    }
-    .state-msg--error { color: #c0392b; }
 
     .table-wrapper {
       background: #fff;
