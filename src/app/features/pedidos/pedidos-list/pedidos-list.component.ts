@@ -10,11 +10,12 @@ import {
 } from '../../../core/models/pedido.model';
 import { Page } from '../../../core/models/page.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-pedidos-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, PaginationComponent],
   template: `
     <div class="page-header">
       <h2 class="page-title">Pedidos</h2>
@@ -91,20 +92,7 @@ import { AuthService } from '../../../core/services/auth.service';
         </table>
       </div>
 
-      @if (page()!.totalPages > 1) {
-        <div class="pagination">
-          <button class="btn btn--ghost btn--sm" [disabled]="page()!.first" (click)="cambiarPagina(paginaActual() - 1)">
-            ← Anterior
-          </button>
-          <span class="pagination__info">
-            Página {{ page()!.number + 1 }} de {{ page()!.totalPages }}
-            ({{ page()!.totalElements }} pedidos)
-          </span>
-          <button class="btn btn--ghost btn--sm" [disabled]="page()!.last" (click)="cambiarPagina(paginaActual() + 1)">
-            Siguiente →
-          </button>
-        </div>
-      }
+      <app-pagination [page]="page()!" itemLabel="pedidos" (pageChange)="cambiarPagina($event)" />
     }
   `,
   styles: [`
@@ -184,15 +172,6 @@ import { AuthService } from '../../../core/services/auth.service';
       background: #fff;
     }
     .select-estado:focus { border-color: #2d6a4f; }
-
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .pagination__info { font-size: 0.875rem; color: #6b7280; }
 
     .btn {
       display: inline-flex;
