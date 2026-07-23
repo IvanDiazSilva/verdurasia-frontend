@@ -190,22 +190,7 @@ import { TipoOferta } from '../../../core/models/oferta.model';
       color: #666;
       font-size: 0.9rem;
     }
-    .state-msg--error { color: #c0392b; }
     .state-msg-inline { font-size: 0.875rem; color: #6b7280; padding: 0.4rem 0; }
-
-    .alert {
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      margin-bottom: 1rem;
-      font-size: 0.875rem;
-    }
-    .alert--error {
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
-      border-left: 4px solid #ef4444;
-    }
-    .alert--error strong { font-weight: 600; }
 
     .card {
       background: #fff;
@@ -215,53 +200,8 @@ import { TipoOferta } from '../../../core/models/oferta.model';
       max-width: 680px;
     }
 
-    .field { margin-bottom: 1.1rem; }
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .label {
-      display: block;
-      margin-bottom: 0.35rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-    }
-    .required { color: #c0392b; margin-left: 2px; }
     .label-hint { font-size: 0.78rem; font-weight: 400; color: #9ca3af; margin-left: 4px; }
-
-    .input {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-family: inherit;
-      color: #111827;
-      background: #fff;
-      outline: none;
-      transition: border-color 0.15s;
-      box-sizing: border-box;
-    }
-    .input:focus { border-color: #2d6a4f; box-shadow: 0 0 0 2px rgba(45,106,79,0.12); }
-    .input--error { border-color: #ef4444; }
     .input--textarea { resize: vertical; min-height: 64px; }
-
-    .field-error {
-      display: block;
-      margin-top: 0.3rem;
-      font-size: 0.78rem;
-      color: #ef4444;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-    }
 
 
   `]
