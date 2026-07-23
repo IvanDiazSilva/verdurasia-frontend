@@ -146,26 +146,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     .badge--futura   { background: #dbeafe; color: #1e40af; }
     .badge--expirada { background: #f3f4f6; color: #6b7280; }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s, opacity 0.15s;
-    }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn--primary  { background: #2d6a4f; color: #fff; }
-    .btn--primary:hover { background: #1b4332; }
-    .btn--ghost { background: transparent; border: 1px solid #d1d5db; color: #374151; }
-    .btn--ghost:hover { background: #f3f4f6; }
-    .btn--danger:hover { border-color: #ef4444; color: #ef4444; background: #fee2e2; }
-    .btn--sm { padding: 0.3rem 0.65rem; font-size: 0.8rem; }
+
   `]
 })
 export class OfertasListComponent implements OnInit {
