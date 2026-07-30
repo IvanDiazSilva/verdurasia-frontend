@@ -17,3 +17,24 @@
 - Commit/PR:
   - Commit: `fa48976`
   - Push: `main -> main`
+
+## Estado para retomar mañana
+- Proyecto en Fase 3.
+- Refactors visuales pequeños ya cerrados y versionados.
+- Próximo foco: una sola subfase pequeña.
+- No abrir nueva rama hasta confirmar alcance y archivos afectados.
+
+## Arranque rápido
+- Abrir el repo en `frontend`.
+- Leer este archivo.
+- Revisar `git status`.
+- Revisar `git branch`.
+- Confirmar la siguiente microtarea antes de tocar código.
+
+## Regla de trabajo
+- Una sesión = una microtarea.
+- Una rama = un único patrón o deuda.
+- Un PR = un alcance pequeño y revisable.
+- Si hay dudas de alcance, parar y documentar antes de seguir.
+
+Siguiente acción para mañana: revisar el estado del proyecto y escoger una única microtarea pequeña de Fase 3.
