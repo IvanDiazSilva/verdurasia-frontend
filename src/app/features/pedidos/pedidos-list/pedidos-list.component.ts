@@ -111,15 +111,6 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     .badge--ENTREGADO      { background: #d1fae5; color: #065f46; }
     .badge--CANCELADO      { background: #fee2e2; color: #991b1b; }
 
-    .select-estado {
-      padding: 0.2rem 0.4rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      outline: none;
-      background: #fff;
-    }
-    .select-estado:focus { border-color: #2d6a4f; }
 
 
   `]
