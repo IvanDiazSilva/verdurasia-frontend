@@ -1,28 +1,19 @@
-# VerdurasIA Frontend — Working Log
-
-## Proyecto
-VerdurasIA frontend
-
-## Fase actual
-Fase 3 — Calidad, validación y refinamiento
-
-## Objetivo de esta sesión
-- ...
-
-## Lo que ya está hecho
-- ...
-
-## Lo que queda pendiente
-- ...
-
-## Siguiente paso mínimo
-- ...
-
-## Rama actual
-- ...
-
-## Último commit o PR relacionado
-- ...
-
-## Fecha
-- ...
+### Sesión
+- Fecha: 2026-07-30
+- Rama: main
+- Objetivo: Crear un log de trabajo dentro del repo para retomar sesiones rápido y no perder el hilo entre fases.
+- Hecho:
+  - Se creó `docs/working-log.md` dentro del frontend.
+  - Se añadió el archivo al repositorio.
+  - Se realizó commit con mensaje: `docs(frontend): add working log for session continuity`.
+  - Se resolvió un `non-fast-forward` al hacer push con `git pull --rebase origin main`.
+  - El cambio quedó subido correctamente a GitHub.
+- Pendiente:
+  - Mantener actualizado este archivo al cerrar cada sesión.
+  - Revisar el estado de las PR de badges y `select-estado`.
+  - Elegir la siguiente microtarea de Fase 3.
+- Siguiente paso:
+  - Leer este archivo al empezar la siguiente sesión y confirmar la siguiente tarea mínima.
+- Commit/PR:
+  - Commit: `fa48976`
+  - Push: `main -> main`
