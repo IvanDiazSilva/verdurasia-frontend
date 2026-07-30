@@ -103,14 +103,6 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     .td--id { color: #9ca3af; font-size: 0.8rem; font-weight: 500; }
     .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
 
-    /* Estado badges */
-    .badge--PENDIENTE      { background: #fef3c7; color: #92400e; }
-    .badge--CONFIRMADO     { background: #dbeafe; color: #1e40af; }
-    .badge--EN_PREPARACION { background: #ede9fe; color: #5b21b6; }
-    .badge--ENVIADO        { background: #d1fae5; color: #065f46; }
-    .badge--ENTREGADO      { background: #d1fae5; color: #065f46; }
-    .badge--CANCELADO      { background: #fee2e2; color: #991b1b; }
-
     .select-estado {
       padding: 0.2rem 0.4rem;
       border: 1px solid #d1d5db;
