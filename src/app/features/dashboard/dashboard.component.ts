@@ -217,13 +217,6 @@ interface Tarjeta {
     .td--nombre { font-weight: 500; }
     .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
 
-    .badge--PENDIENTE      { background: #fef3c7; color: #92400e; }
-    .badge--CONFIRMADO     { background: #dbeafe; color: #1e40af; }
-    .badge--EN_PREPARACION { background: #ede9fe; color: #5b21b6; }
-    .badge--ENVIADO        { background: #d1fae5; color: #065f46; }
-    .badge--ENTREGADO      { background: #d1fae5; color: #065f46; }
-    .badge--CANCELADO      { background: #fee2e2; color: #991b1b; }
-
     /* ---- Ofertas vigentes ---- */
     .ofertas-grid {
       display: grid;
