@@ -167,3 +167,14 @@ h1, h2, h3 {
 }
 
 .state-msg--error { color: #c0392b; }
+
+/* Select de cambio de estado de pedido */
+.select-estado {
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  outline: none;
+  background: #fff;
+}
+.select-estado:focus { border-color: #2d6a4f; }

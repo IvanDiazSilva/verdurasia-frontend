@@ -191,15 +191,7 @@ import { AuthService } from '../../../core/services/auth.service';
     .tfoot-label { font-weight: 600; color: #374151; }
     .text-right { text-align: right; }
 
-    .select-estado {
-      padding: 0.2rem 0.4rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      outline: none;
-      background: #fff;
-    }
-    .select-estado:focus { border-color: #2d6a4f; }
+
 
 
   `]

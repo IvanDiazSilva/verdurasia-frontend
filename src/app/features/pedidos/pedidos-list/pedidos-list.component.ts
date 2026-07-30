@@ -103,15 +103,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     .td--id { color: #9ca3af; font-size: 0.8rem; font-weight: 500; }
     .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
 
-    .select-estado {
-      padding: 0.2rem 0.4rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      outline: none;
-      background: #fff;
-    }
-    .select-estado:focus { border-color: #2d6a4f; }
+
 
 
   `]
