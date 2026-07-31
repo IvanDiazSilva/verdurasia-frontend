@@ -1,4 +1,32 @@
 ### Sesión
+- Fecha: 2026-07-31
+- Rama: feat/categorias
+- Objetivo: Cerrar la feature de categorías en el frontend.
+- Hecho:
+  - Se añadió la feature `categorias` al frontend.
+  - Se creó el listado de categorías (`categorias-list`).
+  - Se creó el formulario reactivo de alta/edición (`categorias-form`).
+  - Se registró la ruta `categorias` con lazy loading.
+  - Se añadió la entrada "Categorías" al sidebar.
+  - Se completó `CategoriaService` con `actualizar()` usando PATCH y `eliminar()` usando DELETE.
+  - Se añadieron `CategoriaCreateRequest` y `CategoriaUpdateRequest` al modelo.
+- Commit/PR:
+  - Commit: `b5c1b40`
+  - Mensaje: `feat(categorias): add categorias feature with list, form and CRUD`
+- Observaciones:
+  - Se asumió PATCH porque es el patrón del resto de servicios del frontend.
+  - Si el backend de categorías usa PUT en vez de PATCH, solo hay que ajustar el método HTTP en `categoria.service.ts`.
+  - Los warnings LF/CRLF al hacer commit son normales en Windows con la config actual de Git; no afectan al funcionamiento.
+- Pendiente:
+  - Hacer push de la rama `feat/categorias`.
+  - Probar la feature de categorías contra el backend.
+  - Confirmar si el endpoint de actualización acepta PATCH o requiere PUT.
+- Siguiente paso:
+  - Push de `feat/categorias`, abrir PR, revisar respuesta del backend.
+
+---
+
+### Sesión
 - Fecha: 2026-07-30
 - Rama: main
 - Objetivo: Crear un log de trabajo dentro del repo para retomar sesiones rápido y no perder el hilo entre fases.
