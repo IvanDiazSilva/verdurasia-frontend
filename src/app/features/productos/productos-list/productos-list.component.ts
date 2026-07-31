@@ -7,6 +7,8 @@ import { ProductoService } from '../../../core/services/producto.service';
 import { Producto } from '../../../core/models/producto.model';
 import { Page } from '../../../core/models/page.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { CategoriaService } from '../../../core/services/categoria.service';
+import { Categoria } from '../../../core/models/categoria.model';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { ListStateComponent } from '../../../shared/components/list-state/list-state.component';
 
@@ -22,7 +24,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
       }
     </div>
 
-    <!-- Filtro de búsqueda -->
+    <!-- Filtros -->
     <div class="filters">
       <input
         class="input"
@@ -30,6 +32,16 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
         placeholder="Buscar por nombre..."
         [formControl]="busquedaCtrl"
       />
+      <select
+        class="select-categoria"
+        [value]="categoriaId()"
+        (change)="onCategoriaChange($event)"
+      >
+        <option [value]="''">Todas las categorías</option>
+        @for (cat of categorias(); track cat.id) {
+          <option [value]="cat.id">{{ cat.nombre }}</option>
+        }
+      </select>
     </div>
 
     <!-- Estado de carga / error -->
@@ -85,7 +97,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     }
   `,
   styles: [`
-    .filters { margin-bottom: 1rem; }
+    .filters { margin-bottom: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
     .input {
       width: 280px;
       padding: 0.45rem 0.75rem;
@@ -96,6 +108,17 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
       transition: border-color 0.15s;
     }
     .input:focus { border-color: #2d6a4f; }
+    .select-categoria {
+      padding: 0.45rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .select-categoria:focus { border-color: #2d6a4f; }
 
     .badge--activo  { background: #d1fae5; color: #065f46; }
     .badge--inactivo { background: #fee2e2; color: #991b1b; }
@@ -105,16 +128,24 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
 })
 export class ProductosListComponent implements OnInit {
   private readonly productoService = inject(ProductoService);
+  private readonly categoriaService = inject(CategoriaService);
   readonly auth = inject(AuthService);
 
   page    = signal<Page<Producto> | null>(null);
   cargando = signal(false);
   error    = signal<string | null>(null);
   paginaActual = signal(0);
+  categoriaId  = signal<number | null>(null);
+  categorias   = signal<Categoria[]>([]);
 
   busquedaCtrl = new FormControl('');
 
   ngOnInit(): void {
+    this.categoriaService.listar(0, 100).subscribe({
+      next: (data) => this.categorias.set(data.content),
+      error: () => {}
+    });
+
     this.cargar();
 
     this.busquedaCtrl.valueChanges.pipe(
@@ -124,6 +155,13 @@ export class ProductosListComponent implements OnInit {
       this.paginaActual.set(0);
       this.cargar();
     });
+  }
+
+  onCategoriaChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.categoriaId.set(value === '' ? null : Number(value));
+    this.paginaActual.set(0);
+    this.cargar();
   }
 
   cambiarPagina(pagina: number): void {
@@ -143,7 +181,8 @@ export class ProductosListComponent implements OnInit {
     this.cargando.set(true);
     this.error.set(null);
     const nombre = this.busquedaCtrl.value ?? undefined;
-    this.productoService.listar(this.paginaActual(), 20, nombre || undefined).subscribe({
+    const catId  = this.categoriaId() ?? undefined;
+    this.productoService.listar(this.paginaActual(), 20, nombre || undefined, catId).subscribe({
       next: (data) => {
         this.page.set(data);
         this.cargando.set(false);
