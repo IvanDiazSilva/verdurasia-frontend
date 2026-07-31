@@ -1,5 +1,27 @@
 ### Sesión
 - Fecha: 2026-07-31
+- Rama: fix/app-spec-smoke-test
+- Objetivo: Arreglar los tests rotos de app.spec.ts para dejar el runner en verde. Cierre de deuda técnica de Fase 3.
+- Hecho:
+  - Se reemplazó el test de scaffolding `should render title` (buscaba `<h1>Hello, verdurasia-frontend`, inexistente en la app real) por `should render the router outlet`, que verifica que `AppComponent` renderiza `<router-outlet>`.
+  - El test `should create the app` ya pasaba; no se tocó.
+  - No fue necesario mockear Keycloak: el `APP_INITIALIZER` de `app.config.ts` no se registra en el `TestBed` del spec.
+- Commit/PR:
+  - Mensaje: `fix(test): update app.spec.ts with smoke test matching real component`
+- Observaciones:
+  - Cambio en un único archivo: `src/app/app.spec.ts` (1 test reemplazado, resto intacto).
+  - Resultado verificado: `Test Files 1 passed (1) | Tests 2 passed (2)`.
+  - Comando de verificación: `npx ng test --no-watch --include="src/app/app.spec.ts"`.
+  - No se tocaron archivos de producción.
+- Pendiente:
+  - Ninguno para esta microtarea.
+- Siguiente paso:
+  - Elegir siguiente microtarea de Fase 3 (candidatas: dashboard con degradado parcial, o import `computed` sin usar en `productos-list`).
+
+---
+
+### Sesión
+- Fecha: 2026-07-31
 - Rama: feat/productos-filtro-categoria
 - Objetivo: Añadir filtro por categoría en la lista de productos y dejar la rama lista para PR.
 - Hecho:
