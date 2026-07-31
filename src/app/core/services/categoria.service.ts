@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Categoria } from '../models/categoria.model';
+import { Categoria, CategoriaCreateRequest, CategoriaUpdateRequest } from '../models/categoria.model';
 import { Page } from '../models/page.model';
 
 @Injectable({ providedIn: 'root' })
@@ -20,7 +20,15 @@ export class CategoriaService {
     return this.http.get<Categoria>(`${this.base}/${id}`);
   }
 
-  crear(data: Omit<Categoria, 'id'>): Observable<Categoria> {
+  crear(data: CategoriaCreateRequest): Observable<Categoria> {
     return this.http.post<Categoria>(this.base, data);
+  }
+
+  actualizar(id: number, data: CategoriaUpdateRequest): Observable<Categoria> {
+    return this.http.patch<Categoria>(`${this.base}/${id}`, data);
+  }
+
+  eliminar(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${id}`);
   }
 }

@@ -77,10 +77,11 @@ interface NavItem {
 })
 export class SidebarComponent {
   navItems: NavItem[] = [
-    { label: 'Dashboard',  route: '/dashboard', icon: '📊' },
-    { label: 'Clientes',   route: '/clientes',  icon: '👥' },
-    { label: 'Productos',  route: '/productos',  icon: '🥦' },
-    { label: 'Pedidos',    route: '/pedidos',    icon: '📦' },
-    { label: 'Ofertas',    route: '/ofertas',    icon: '🏷️' }
+    { label: 'Dashboard',   route: '/dashboard',   icon: '📊' },
+    { label: 'Clientes',    route: '/clientes',    icon: '👥' },
+    { label: 'Productos',   route: '/productos',   icon: '🥦' },
+    { label: 'Pedidos',     route: '/pedidos',     icon: '📦' },
+    { label: 'Ofertas',     route: '/ofertas',     icon: '🏷️' },
+    { label: 'Categorías',  route: '/categorias',  icon: '🗂️' }
   ];
 }
