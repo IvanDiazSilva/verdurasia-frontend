@@ -1,4 +1,34 @@
 ### Sesión
+- Fecha: 2026-08-03
+- Rama: fix/categoria-put
+- Objetivo: MT-01 — Corregir el desajuste HTTP entre frontend y backend en la edición de categorías.
+- Hecho:
+  - Se confirmó que `CategoriaService.actualizar()` usaba `PATCH` mientras el backend expone `PUT /api/categorias/:id`, causando HTTP 405 al editar.
+  - Se modificó únicamente `src/app/core/services/categoria.service.ts:28`: `this.http.patch` → `this.http.put`.
+  - El body (`CategoriaUpdateRequest`) no cambió.
+  - Se hizo commit y push de la rama.
+- Commit/PR:
+  - Mensaje: `fix(categorias): usar PUT en lugar de PATCH en actualizar() para alinear con el backend`
+  - Commit: `e737097`
+  - PR pendiente de abrir manualmente en: https://github.com/IvanDiazSilva/verdurasia-frontend/pull/new/fix/categoria-put
+- Observaciones:
+  - Cambio mínimo, una sola línea, un solo archivo.
+  - No se tocaron otros servicios, componentes ni rutas.
+  - `gh` CLI no está instalado en el entorno; el PR debe abrirse desde GitHub web.
+- Pruebas manuales sugeridas:
+  1. Levantar backend con `PUT /api/categorias/:id` activo.
+  2. `ng serve` en el frontend.
+  3. Ir a la sección Categorías, editar una y guardar.
+  4. Verificar en Network: petición PUT con 200 OK (antes: 405).
+  5. Confirmar que la lista refleja el cambio correctamente.
+- Pendiente:
+  - Abrir el PR en GitHub web y mergearlo a main.
+- Siguiente paso:
+  - Tras cerrar el PR, elegir la siguiente microtarea de Fase 3.
+
+---
+
+### Sesión
 - Fecha: 2026-07-31
 - Rama: fix/app-spec-smoke-test
 - Objetivo: Arreglar los tests rotos de app.spec.ts para dejar el runner en verde. Cierre de deuda técnica de Fase 3.
