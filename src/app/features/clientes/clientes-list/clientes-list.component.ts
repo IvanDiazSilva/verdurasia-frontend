@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -36,11 +36,11 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     <app-list-state
       [cargando]="cargando()"
       [error]="error()"
-      [vacio]="clientesFiltrados().length === 0"
-      [mensajeVacio]="busquedaCtrl.value ? 'No hay clientes que coincidan con la búsqueda.' : 'No hay clientes registrados.'"
+      [vacio]="(page()?.content ?? []).length === 0"
+      [mensajeVacio]="busquedaActual() ? 'No hay clientes que coincidan con la búsqueda.' : 'No hay clientes registrados.'"
     />
 
-    @if (!cargando() && !error() && clientesFiltrados().length > 0) {
+    @if (!cargando() && !error() && (page()?.content ?? []).length > 0) {
       <!-- Tabla -->
       <div class="table-wrapper">
         <table class="table">
@@ -55,7 +55,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
             </tr>
           </thead>
           <tbody>
-            @for (c of clientesFiltrados(); track c.id) {
+            @for (c of (page()?.content ?? []); track c.id) {
               <tr>
                 <td class="td--nombre">{{ c.nombre }}</td>
                 <td>{{ c.email }}</td>
@@ -112,33 +112,24 @@ export class ClientesListComponent implements OnInit {
   private readonly clienteService = inject(ClienteService);
   readonly auth = inject(AuthService);
 
-  page         = signal<Page<Cliente> | null>(null);
-  cargando     = signal(false);
-  error        = signal<string | null>(null);
-  paginaActual = signal(0);
+  page          = signal<Page<Cliente> | null>(null);
+  cargando      = signal(false);
+  error         = signal<string | null>(null);
+  paginaActual  = signal(0);
+  busquedaActual = signal('');
 
   busquedaCtrl = new FormControl('');
-
-  /** Filtrado client-side: la API de clientes no acepta parámetros de búsqueda. */
-  clientesFiltrados = computed(() => {
-    const todos = this.page()?.content ?? [];
-    const termino = (this.busquedaCtrl.value ?? '').toLowerCase().trim();
-    if (!termino) return todos;
-    return todos.filter(c =>
-      c.nombre.toLowerCase().includes(termino) ||
-      c.email.toLowerCase().includes(termino)
-    );
-  });
 
   ngOnInit(): void {
     this.cargar();
 
     this.busquedaCtrl.valueChanges.pipe(
-      debounceTime(250),
+      debounceTime(300),
       distinctUntilChanged()
-    ).subscribe(() => {
-      // El filtrado es client-side; solo recargamos si la búsqueda se vacía
-      // y aún no tenemos datos (para el caso de carga inicial fallida).
+    ).subscribe((termino) => {
+      this.busquedaActual.set(termino ?? '');
+      this.paginaActual.set(0);
+      this.cargar();
     });
   }
 
@@ -158,7 +149,8 @@ export class ClientesListComponent implements OnInit {
   private cargar(): void {
     this.cargando.set(true);
     this.error.set(null);
-    this.clienteService.listar(this.paginaActual(), 20).subscribe({
+    const nombre = this.busquedaActual() || undefined;
+    this.clienteService.listar(this.paginaActual(), 20, nombre).subscribe({
       next: (data) => {
         this.page.set(data);
         this.cargando.set(false);
