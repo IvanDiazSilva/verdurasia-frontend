@@ -25,7 +25,7 @@ export class CategoriaService {
   }
 
   actualizar(id: number, data: CategoriaUpdateRequest): Observable<Categoria> {
-    return this.http.patch<Categoria>(`${this.base}/${id}`, data);
+    return this.http.put<Categoria>(`${this.base}/${id}`, data);
   }
 
   eliminar(id: number): Observable<void> {
