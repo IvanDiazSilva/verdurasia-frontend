@@ -1,5 +1,45 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: feat/pedidos-filtro-estado (frontend) / fix/pedidos-filtro-estado (backend)
+- Objetivo: MT-09a — Filtro por estado server-side en la lista de pedidos.
+- Diagnóstico previo:
+  - El backend no exponía `?estado` en `GET /api/pedidos` (igual que clientes antes de MT-02a).
+  - `PedidoRepository` ya tenía `findByEstado(Estado, Pageable)` sin conectar.
+- Hecho (backend):
+  - `PedidoController.java`: añadido `@RequestParam(required = false) Pedido.Estado estado`.
+  - `PedidoService.java`: `listar()` ramifica según `estado` (null → `findAll`, valor → `findByEstado`).
+  - Mergeado a `main` del backend.
+- Hecho (frontend):
+  - `pedido.service.ts`: añadido `estado?: EstadoPedido` opcional a `listar()`, se envía como query param si tiene valor.
+  - `pedidos-list.component.ts`:
+    - Signal `estadoFiltro` nuevo.
+    - Select "Todos los estados" + opciones de `ESTADOS_PEDIDO` en la cabecera.
+    - `onFiltroEstado()`: actualiza el signal, resetea página a 0, llama `cargar()`.
+    - `cargar()` pasa `estadoFiltro()` al servicio.
+    - `mensajeVacio` diferenciado según haya filtro activo o no.
+    - Estilos del select añadidos inline.
+  - Build verificado sin errores.
+- Archivos tocados (frontend): 2 (`pedido.service.ts`, `pedidos-list.component.ts`).
+- Archivos tocados (backend): 2 (`PedidoController.java`, `PedidoService.java`).
+- Commit/PR:
+  - Mensaje: `feat(pedidos): añadir filtro server-side por estado en la lista de pedidos`
+- Pasos para probar:
+  1. Levantar backend actualizado.
+  2. `ng serve`, ir a Pedidos.
+  3. El select muestra "Todos los estados" y los 6 estados disponibles.
+  4. Seleccionar un estado → Network muestra `GET /api/pedidos?estado=PENDIENTE&page=0&size=20`.
+  5. La lista muestra solo pedidos de ese estado.
+  6. Cambiar de página con filtro activo → paginación sigue funcionando.
+  7. Volver a "Todos los estados" → lista completa.
+- Pendiente:
+  - Abrir y mergear los PRs en GitHub (backend y frontend).
+- Siguiente paso:
+  - MT-09b (feedback visual al cambiar estado) o MT-06.4 (specs ProductoService/OfertaService).
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: — (sin rama, sin cambios de código)
 - Objetivo: MT-08 — Añadir botón "← Volver" en el detalle de pedido.
 - Hecho:

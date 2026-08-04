@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   Pedido,
+  EstadoPedido,
   PedidoCreateRequest,
   PedidoCambiarEstadoRequest,
 } from '../models/pedido.model';
@@ -14,8 +15,11 @@ export class PedidoService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/pedidos`;
 
-  listar(page = 0, size = 20): Observable<Page<Pedido>> {
-    const params = new HttpParams().set('page', page).set('size', size);
+  listar(page = 0, size = 20, estado?: EstadoPedido): Observable<Page<Pedido>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (estado) {
+      params = params.set('estado', estado);
+    }
     return this.http.get<Page<Pedido>>(this.base, { params });
   }
 

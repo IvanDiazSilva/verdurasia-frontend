@@ -25,11 +25,21 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
       }
     </div>
 
+    <!-- Filtro por estado -->
+    <div class="filters">
+      <select class="select-filtro" (change)="onFiltroEstado($event)">
+        <option value="">Todos los estados</option>
+        @for (e of estados; track e) {
+          <option [value]="e" [selected]="e === estadoFiltro()">{{ etiqueta(e) }}</option>
+        }
+      </select>
+    </div>
+
     <app-list-state
       [cargando]="cargando()"
       [error]="error()"
       [vacio]="page()?.content?.length === 0"
-      mensajeVacio="No hay pedidos registrados."
+      [mensajeVacio]="estadoFiltro() ? 'No hay pedidos con ese estado.' : 'No hay pedidos registrados.'"
     />
 
     @if (!cargando() && !error() && page()?.content?.length! > 0) {
@@ -98,24 +108,32 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     }
   `,
   styles: [`
-
-
+    .filters { margin-bottom: 1rem; }
+    .select-filtro {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      background: #fff;
+      color: #374151;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .select-filtro:focus { border-color: #2d6a4f; }
     .td--id { color: #9ca3af; font-size: 0.8rem; font-weight: 500; }
     .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
-
-
-
-
   `]
 })
 export class PedidosListComponent implements OnInit {
   private readonly pedidoService = inject(PedidoService);
   readonly auth = inject(AuthService);
 
-  page         = signal<Page<Pedido> | null>(null);
-  cargando     = signal(false);
-  error        = signal<string | null>(null);
-  paginaActual = signal(0);
+  page            = signal<Page<Pedido> | null>(null);
+  cargando        = signal(false);
+  error           = signal<string | null>(null);
+  paginaActual    = signal(0);
+  estadoFiltro    = signal<EstadoPedido | undefined>(undefined);
   /** ID del pedido cuyo estado se está editando inline (null = ninguno). */
   cambiandoEstado = signal<number | null>(null);
 
@@ -128,6 +146,13 @@ export class PedidosListComponent implements OnInit {
 
   cambiarPagina(pagina: number): void {
     this.paginaActual.set(pagina);
+    this.cargar();
+  }
+
+  onFiltroEstado(event: Event): void {
+    const valor = (event.target as HTMLSelectElement).value;
+    this.estadoFiltro.set(valor ? valor as EstadoPedido : undefined);
+    this.paginaActual.set(0);
     this.cargar();
   }
 
@@ -160,7 +185,7 @@ export class PedidosListComponent implements OnInit {
   private cargar(): void {
     this.cargando.set(true);
     this.error.set(null);
-    this.pedidoService.listar(this.paginaActual(), 20).subscribe({
+    this.pedidoService.listar(this.paginaActual(), 20, this.estadoFiltro()).subscribe({
       next: (data) => {
         this.page.set(data);
         this.cargando.set(false);
