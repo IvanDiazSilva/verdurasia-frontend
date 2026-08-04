@@ -1,5 +1,33 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: feat/dashboard-pedidos-pendientes
+- Objetivo: MT-07 — Mejorar el dashboard con contexto operativo útil: tarjeta de pedidos pendientes y tabla con prioridad visual.
+- Hecho:
+  - Se añadió signal `pedidosPendientes` al componente.
+  - Nueva tarjeta "Pendientes" (⏳, color rojo `#b91c1c`) como primera tarjeta del dashboard, derivada de los pedidos cargados.
+  - La tabla "Últimos pedidos" ahora ordena los pedidos PENDIENTE primero, luego el resto por id desc.
+  - Las filas de pedidos PENDIENTE tienen fondo naranja suave (`#fff7ed`) para destacarlos visualmente.
+  - Empty state de la tabla mejorado: añade enlace "Crear el primer pedido →" cuando no hay pedidos.
+  - No se tocó el backend ni otros servicios — todo derivado de los datos ya cargados.
+  - Build verificado sin errores: `npx ng build --configuration development`.
+- Archivos tocados:
+  - `src/app/features/dashboard/dashboard.component.ts` (único archivo, inline template+styles).
+- Commit/PR:
+  - Mensaje: `feat(dashboard): añadir tarjeta pedidos pendientes y ordenar tabla por urgencia`
+- Pasos para probar manualmente:
+  1. `ng serve`, ir al dashboard.
+  2. La primera tarjeta muestra el conteo de pedidos en estado PENDIENTE.
+  3. La tabla "Últimos pedidos" muestra los pendientes primero, con fondo naranja.
+  4. Si no hay pedidos, el empty state incluye un enlace para crear el primero.
+- Pendiente:
+  - Abrir y mergear el PR en GitHub.
+- Siguiente paso:
+  - MT-06.4 (opcional): specs para ProductoService y OfertaService, o nueva área de mejora.
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: feat/categoria-service-specs
 - Objetivo: MT-06.3 — Añadir specs mínimos de contrato HTTP para CategoriaService. Cierra la cobertura básica de todos los servicios del frontend.
 - Hecho:

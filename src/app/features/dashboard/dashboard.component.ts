@@ -53,7 +53,10 @@ interface Tarjeta {
         </div>
 
         @if (ultimosPedidos().length === 0) {
-          <div class="state-msg">No hay pedidos registrados aún.</div>
+          <div class="state-msg">
+            No hay pedidos registrados aún.
+            <a routerLink="/pedidos" class="state-msg__link">Crear el primer pedido →</a>
+          </div>
         } @else {
           <div class="table-wrapper">
             <table class="table">
@@ -68,7 +71,7 @@ interface Tarjeta {
               </thead>
               <tbody>
                 @for (p of ultimosPedidos(); track p.id) {
-                  <tr>
+                  <tr [class.tr--pendiente]="p.estado === 'PENDIENTE'">
                     <td class="td--id">{{ p.id }}</td>
                     <td class="td--nombre">{{ p.clienteNombre }}</td>
                     <td>
@@ -135,6 +138,14 @@ interface Tarjeta {
       font-size: 0.9rem;
     }
     .state-msg--error { color: #c0392b; }
+    .state-msg__link {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #2d6a4f;
+      text-decoration: none;
+    }
+    .state-msg__link:hover { text-decoration: underline; }
 
     /* ---- Tarjetas ---- */
     .tarjetas {
@@ -213,6 +224,8 @@ interface Tarjeta {
     .text-right { text-align: right; }
     .table tbody tr:last-child td { border-bottom: none; }
     .table tbody tr:hover { background: #f9fafb; }
+    .tr--pendiente { background: #fff7ed; }
+    .tr--pendiente:hover { background: #ffedd5; }
     .td--id { color: #9ca3af; font-size: 0.8rem; font-weight: 500; }
     .td--nombre { font-weight: 500; }
     .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
@@ -247,11 +260,12 @@ export class DashboardComponent implements OnInit {
   private readonly pedidoService   = inject(PedidoService);
   private readonly ofertaService   = inject(OfertaService);
 
-  tarjetas       = signal<Tarjeta[]>([]);
-  ultimosPedidos = signal<Pedido[]>([]);
+  tarjetas        = signal<Tarjeta[]>([]);
+  ultimosPedidos  = signal<Pedido[]>([]);
   ofertasVigentes = signal<Oferta[]>([]);
-  cargando       = signal(true);
-  error          = signal<string | null>(null);
+  pedidosPendientes = signal(0);
+  cargando        = signal(true);
+  error           = signal<string | null>(null);
 
   readonly hoy = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
@@ -268,7 +282,24 @@ export class DashboardComponent implements OnInit {
       ofertas:   this.ofertaService.listar(0, 1),
     }).subscribe({
       next: ({ productos, clientes, pedidos, vigentes, ofertas }) => {
+        const pendientes = pedidos.content.filter(p => p.estado === 'PENDIENTE').length;
+        this.pedidosPendientes.set(pendientes);
+
+        // Ordenar: pendientes primero, luego el resto por id desc
+        const ordenados = [...pedidos.content].sort((a, b) => {
+          if (a.estado === 'PENDIENTE' && b.estado !== 'PENDIENTE') return -1;
+          if (a.estado !== 'PENDIENTE' && b.estado === 'PENDIENTE') return  1;
+          return b.id - a.id;
+        });
+
         this.tarjetas.set([
+          {
+            titulo: 'Pendientes',
+            valor:  pendientes,
+            enlace: '/pedidos',
+            icono:  '⏳',
+            color:  '#b91c1c',
+          },
           {
             titulo: 'Productos',
             valor:  productos.totalElements,
@@ -298,7 +329,7 @@ export class DashboardComponent implements OnInit {
             color:  '#5b21b6',
           },
         ]);
-        this.ultimosPedidos.set(pedidos.content);
+        this.ultimosPedidos.set(ordenados);
         this.ofertasVigentes.set(vigentes);
         this.cargando.set(false);
       },
