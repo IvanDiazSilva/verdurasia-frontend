@@ -1,5 +1,23 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: — (sin rama, sin cambios de código)
+- Objetivo: MT-08 — Añadir botón "← Volver" en el detalle de pedido.
+- Hecho:
+  - Diagnóstico previo confirmó que `pedido-detalle.component.ts:22` ya tiene implementado el enlace de retorno:
+    `<a routerLink="/pedidos" class="btn btn--ghost btn--sm">← Volver</a>`
+  - El enlace es visible en la cabecera junto al título, usa el mismo estilo que el resto de la app y navega a `/pedidos` sin depender del navegador.
+  - El criterio de aceptación ya se cumplía antes de esta sesión.
+- Archivos tocados: ninguno.
+- Commit/PR: ninguno necesario.
+- Observaciones:
+  - MT-08 se cierra como "ya implementada" — no genera deuda ni pendiente.
+- Siguiente paso:
+  - Elegir MT-09.
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: feat/dashboard-pedidos-pendientes
 - Objetivo: MT-07 — Mejorar el dashboard con contexto operativo útil: tarjeta de pedidos pendientes y tabla con prioridad visual.
 - Hecho:
