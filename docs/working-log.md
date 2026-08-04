@@ -1,4 +1,25 @@
 ### Sesión
+- Fecha: 2026-08-04
+- Rama: fix/computed-import-cleanup
+- Objetivo: MT-03 — Eliminar import `computed` sin usar en `productos-list.component.ts`.
+- Hecho:
+  - Se confirmó que `computed` estaba importado desde `@angular/core` en `productos-list.component.ts:1` pero no se usaba en ningún punto del archivo (196 líneas).
+  - Se eliminó `computed` del destructurado del import. Un solo archivo, una sola línea.
+- Commit/PR:
+  - Mensaje: `chore(productos): eliminar import computed sin usar en productos-list`
+  - Commit: `41f55ea`
+  - PR: https://github.com/IvanDiazSilva/verdurasia-frontend/pull/new/fix/computed-import-cleanup
+- Observaciones:
+  - Cambio mínimo, cero riesgo funcional.
+  - `computed` sí se usa en `pedido-form.component.ts` y `auth.service.ts` — esos no se tocaron.
+- Pendiente:
+  - Abrir y mergear el PR en GitHub.
+- Siguiente paso:
+  - MT-04: auditar placeholder "nombre o email" en clientes (el backend solo filtra por nombre).
+
+---
+
+### Sesión
 - Fecha: 2026-08-03
 - Rama: fix/categoria-put
 - Objetivo: MT-01 — Corregir el desajuste HTTP entre frontend y backend en la edición de categorías.
