@@ -1,5 +1,36 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: feat/categoria-service-specs
+- Objetivo: MT-06.3 — Añadir specs mínimos de contrato HTTP para CategoriaService. Cierra la cobertura básica de todos los servicios del frontend.
+- Hecho:
+  - Se creó `src/app/core/services/categoria.service.spec.ts` desde cero.
+  - 6 tests con patrón Arrange / Act / Assert usando `HttpClientTestingModule` + `HttpTestingController`.
+  - Tests añadidos:
+    - `listar()` → GET `/api/categorias?page=0&size=100` (con y sin defaults).
+    - `obtener(id)` → GET `/api/categorias/1`.
+    - `crear(payload)` → POST `/api/categorias` con body correcto.
+    - `actualizar(id, payload)` → **PUT** `/api/categorias/1` con body correcto (verifica MT-01).
+    - `eliminar(id)` → DELETE `/api/categorias/1`.
+  - `afterEach` con `httpMock.verify()` para detectar requests pendientes.
+  - Resultado verificado: `Test Files 1 passed (1) | Tests 6 passed (6)`.
+  - Comando: `npx ng test --no-watch --include="src/app/core/services/categoria.service.spec.ts"`.
+- Archivos tocados:
+  - `src/app/core/services/categoria.service.spec.ts` (nuevo, 120 líneas).
+  - No se tocó `categoria.service.ts` ni ningún componente.
+- Commit/PR:
+  - Mensaje: `test(categorias): añadir specs mínimos de contrato HTTP para CategoriaService`
+- Observaciones:
+  - El test de `actualizar()` verifica explícitamente que el verbo es PUT (no PATCH), consolidando la corrección de MT-01.
+  - Con esta microtarea quedan cubiertos los tres servicios críticos: PedidoService, ClienteService y CategoriaService.
+- Pendiente:
+  - Abrir y mergear el PR en GitHub.
+- Siguiente paso:
+  - MT-06.4 (opcional): specs para ProductoService y OfertaService, o pasar a otra área de mejora.
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: feat/cliente-service-specs
 - Objetivo: MT-06.2 — Añadir specs mínimos de contrato HTTP para ClienteService, incluyendo la lógica del filtro ?nombre condicional (MT-02b).
 - Hecho:
