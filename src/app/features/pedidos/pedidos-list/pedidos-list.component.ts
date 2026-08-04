@@ -62,7 +62,9 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
                 <td class="td--id">{{ p.id }}</td>
                 <td class="td--nombre">{{ p.clienteNombre }}</td>
                 <td>
-                  @if (auth.isAdmin() && cambiandoEstado() === p.id) {
+                  @if (guardandoEstado() === p.id) {
+                    <span class="estado-guardando">Guardando...</span>
+                  } @else if (auth.isAdmin() && cambiandoEstado() === p.id) {
                     <select
                       class="select-estado"
                       [value]="p.estado"
@@ -83,6 +85,9 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
                     >
                       {{ etiqueta(p.estado) }}
                     </span>
+                    @if (errorEstadoId() === p.id) {
+                      <div class="estado-error">{{ errorEstadoMsg() }}</div>
+                    }
                   }
                 </td>
                 <td class="text-right">{{ p.total | number:'1.2-2' }} €</td>
@@ -123,6 +128,21 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     .select-filtro:focus { border-color: #2d6a4f; }
     .td--id { color: #9ca3af; font-size: 0.8rem; font-weight: 500; }
     .td--fecha { color: #6b7280; font-size: 0.82rem; white-space: nowrap; }
+    .estado-guardando {
+      font-size: 0.78rem;
+      color: #6b7280;
+      font-style: italic;
+      animation: pulso 1s ease-in-out infinite alternate;
+    }
+    @keyframes pulso {
+      from { opacity: 1; }
+      to   { opacity: 0.4; }
+    }
+    .estado-error {
+      font-size: 0.75rem;
+      color: #b91c1c;
+      margin-top: 0.2rem;
+    }
   `]
 })
 export class PedidosListComponent implements OnInit {
@@ -134,8 +154,14 @@ export class PedidosListComponent implements OnInit {
   error           = signal<string | null>(null);
   paginaActual    = signal(0);
   estadoFiltro    = signal<EstadoPedido | undefined>(undefined);
-  /** ID del pedido cuyo estado se está editando inline (null = ninguno). */
+  /** ID del pedido cuyo select de estado está abierto (null = ninguno). */
   cambiandoEstado = signal<number | null>(null);
+  /** ID del pedido cuya petición PATCH está en vuelo (null = ninguna). */
+  guardandoEstado = signal<number | null>(null);
+  /** ID del pedido con error de cambio de estado (null = ninguno). */
+  errorEstadoId   = signal<number | null>(null);
+  /** Mensaje de error del último cambio de estado fallido. */
+  errorEstadoMsg  = signal<string | null>(null);
 
   readonly estados = ESTADOS_PEDIDO;
   readonly etiqueta = (e: EstadoPedido) => ESTADO_LABEL[e];
@@ -162,14 +188,23 @@ export class PedidosListComponent implements OnInit {
       this.cambiandoEstado.set(null);
       return;
     }
+
+    // Limpiar error previo y activar spinner de guardado
+    this.errorEstadoId.set(null);
+    this.errorEstadoMsg.set(null);
+    this.guardandoEstado.set(pedido.id);
+
     this.pedidoService.cambiarEstado(pedido.id, { estado: nuevoEstado }).subscribe({
       next: () => {
+        this.guardandoEstado.set(null);
         this.cambiandoEstado.set(null);
         this.cargar();
       },
       error: (e) => {
-        this.error.set(e.message ?? 'Error al cambiar el estado del pedido.');
+        this.guardandoEstado.set(null);
         this.cambiandoEstado.set(null);
+        this.errorEstadoId.set(pedido.id);
+        this.errorEstadoMsg.set(e.message ?? 'Error al cambiar el estado.');
       }
     });
   }

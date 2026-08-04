@@ -1,5 +1,42 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: feat/pedidos-feedback-estado
+- Objetivo: MT-09b — Feedback visual al cambiar estado de un pedido inline.
+- Problema previo:
+  - Al cambiar estado inline, no había ningún indicador de que la petición estaba en vuelo.
+  - Los errores se mostraban en el banner global de la lista, lejos de la fila afectada.
+- Hecho:
+  - Añadidos 3 signals nuevos al componente:
+    - `guardandoEstado`: id del pedido con petición PATCH en vuelo (null = ninguna).
+    - `errorEstadoId`: id del pedido con error de cambio de estado.
+    - `errorEstadoMsg`: texto del error.
+  - `onCambioEstado()` actualizado:
+    - activa `guardandoEstado` antes del PATCH.
+    - en éxito: limpia `guardandoEstado`, cierra el select y recarga la lista.
+    - en error: limpia `guardandoEstado`, muestra error inline en la fila (no en el banner global).
+  - Template actualizado:
+    - mientras `guardandoEstado() === p.id`: muestra "Guardando..." con animación de pulso en lugar del select.
+    - si `errorEstadoId() === p.id`: muestra el mensaje de error en rojo debajo del badge.
+  - Estilos añadidos: `.estado-guardando` (pulso animado) y `.estado-error` (rojo inline).
+  - Un solo archivo tocado: `pedidos-list.component.ts`.
+  - Build verificado sin errores.
+- Commit/PR:
+  - Mensaje: `feat(pedidos): añadir feedback visual al cambiar estado de pedido inline`
+- Pasos para probar:
+  1. `ng serve`, ir a Pedidos.
+  2. Clic en un badge de estado (admin) → aparece el select.
+  3. Cambiar el estado → el select desaparece y aparece "Guardando..." con animación.
+  4. Al completar → la lista se recarga con el nuevo estado.
+  5. Para probar el error: desconectar el backend y cambiar un estado → aparece el mensaje de error en rojo bajo el badge, sin afectar el resto de la lista.
+- Pendiente:
+  - Abrir y mergear el PR en GitHub.
+- Siguiente paso:
+  - MT-06.4 (specs ProductoService/OfertaService) u otra área de mejora.
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: feat/pedidos-filtro-estado (frontend) / fix/pedidos-filtro-estado (backend)
 - Objetivo: MT-09a — Filtro por estado server-side en la lista de pedidos.
 - Diagnóstico previo:
