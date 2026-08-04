@@ -1,5 +1,27 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: fix/clientes-placeholder-nombre
+- Objetivo: MT-04a — Corregir el placeholder del buscador de clientes para que refleje el filtro real (solo nombre, no email).
+- Hecho:
+  - Se confirmó que el backend filtra únicamente por `nombre` (`findByNombreContainingIgnoreCase`), no por email.
+  - Se modificó `clientes-list.component.ts:30`: `"Buscar por nombre o email..."` → `"Buscar por nombre..."`.
+  - Un solo archivo, una sola línea.
+- Commit/PR:
+  - Mensaje: `fix(clientes): corregir placeholder del buscador para reflejar filtro real por nombre`
+  - Commit: `b97b22e`
+  - PR: https://github.com/IvanDiazSilva/verdurasia-frontend/pull/new/fix/clientes-placeholder-nombre
+- Observaciones:
+  - Cambio de UX honesta: el usuario ya no verá una promesa que el sistema no cumple.
+  - Si en MT-04b se amplía el backend para filtrar también por email, este placeholder deberá revertirse o ampliarse.
+- Pendiente:
+  - Abrir y mergear el PR en GitHub.
+- Siguiente paso:
+  - MT-05: auditar PATCH vs PUT en el resto de servicios del frontend.
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: fix/computed-import-cleanup
 - Objetivo: MT-03 — Eliminar import `computed` sin usar en `productos-list.component.ts`.
 - Hecho:
