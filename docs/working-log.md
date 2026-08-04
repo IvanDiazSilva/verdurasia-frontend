@@ -1,5 +1,36 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: feat/cliente-service-specs
+- Objetivo: MT-06.2 — Añadir specs mínimos de contrato HTTP para ClienteService, incluyendo la lógica del filtro ?nombre condicional (MT-02b).
+- Hecho:
+  - Se creó `src/app/core/services/cliente.service.spec.ts` desde cero.
+  - 8 tests con patrón Arrange / Act / Assert usando `HttpClientTestingModule` + `HttpTestingController`.
+  - Corrección durante desarrollo: el proyecto usa Vitest (no Jasmine), por lo que `toBeFalse()` debía ser `toBeFalsy()`.
+  - Tests añadidos:
+    - `listar()` sin nombre → GET sin `?nombre`.
+    - `listar()` con nombre → GET con `?nombre=María` en params.
+    - `listar()` con nombre en blanco → GET sin `?nombre` (lógica de trim).
+    - `listar()` defaults → page=0, size=20.
+    - `obtener(id)` → GET `/api/clientes/1`.
+    - `crear(payload)` → POST con body correcto.
+    - `actualizar(id, payload)` → PATCH con body correcto.
+    - `eliminar(id)` → DELETE `/api/clientes/1`.
+  - Resultado verificado: `Test Files 1 passed (1) | Tests 8 passed (8)`.
+  - Comando: `npx ng test --no-watch --include="src/app/core/services/cliente.service.spec.ts"`.
+- Archivos tocados:
+  - `src/app/core/services/cliente.service.spec.ts` (nuevo, 130 líneas).
+  - No se tocó `cliente.service.ts` ni ningún componente.
+- Commit/PR:
+  - Mensaje: `test(clientes): añadir specs mínimos de contrato HTTP para ClienteService`
+- Pendiente:
+  - Abrir y mergear el PR en GitHub.
+- Siguiente paso:
+  - MT-06.3: specs mínimos para CategoriaService (último servicio sin cobertura).
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: feat/pedido-service-specs
 - Objetivo: MT-06.1 — Añadir specs mínimos de contrato HTTP para PedidoService.
 - Hecho:
