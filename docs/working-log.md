@@ -1,5 +1,34 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: feat/pedido-service-specs
+- Objetivo: MT-06.1 — Añadir specs mínimos de contrato HTTP para PedidoService.
+- Hecho:
+  - No existía ningún spec de servicios en el proyecto.
+  - Se creó `src/app/core/services/pedido.service.spec.ts` desde cero.
+  - 6 tests con patrón Arrange / Act / Assert usando `HttpClientTestingModule` + `HttpTestingController`.
+  - Tests añadidos:
+    - `listar()` → GET `/api/pedidos?page=0&size=20` (con y sin defaults).
+    - `obtener(id)` → GET `/api/pedidos/1`.
+    - `crear(payload)` → POST `/api/pedidos` con body correcto.
+    - `cambiarEstado(id, payload)` → PATCH `/api/pedidos/1/estado` con body correcto.
+    - `eliminar(id)` → DELETE `/api/pedidos/1`.
+  - `afterEach` con `httpMock.verify()` para detectar requests pendientes.
+  - Resultado verificado: `Test Files 1 passed (1) | Tests 6 passed (6)`.
+  - Comando de verificación: `npx ng test --no-watch --include="src/app/core/services/pedido.service.spec.ts"`.
+- Archivos tocados:
+  - `src/app/core/services/pedido.service.spec.ts` (nuevo, 117 líneas).
+  - No se tocó `pedido.service.ts` ni ningún componente.
+- Commit/PR:
+  - Mensaje: `test(pedidos): añadir specs mínimos de contrato HTTP para PedidoService`
+- Pendiente:
+  - Abrir y mergear el PR en GitHub.
+- Siguiente paso:
+  - MT-06.2: specs mínimos para otro servicio crítico (candidato: ClienteService o CategoriaService).
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: fix/clientes-placeholder-nombre
 - Objetivo: MT-04a — Corregir el placeholder del buscador de clientes para que refleje el filtro real (solo nombre, no email).
 - Hecho:
