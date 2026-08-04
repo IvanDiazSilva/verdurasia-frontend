@@ -1,3 +1,58 @@
+---
+## CIERRE DE JORNADA — 2026-08-04
+
+### Estado general al cierre
+- **Fase 3** activa. Sin fecha de cierre fijada — el trabajo avanza por microtareas.
+- Frontend: `main` en `6529c2d` — limpio, sin cambios pendientes.
+- Backend: `main` en `e1dda9f` — limpio, sin cambios pendientes.
+- Ramas: **cero ramas de microtarea** en local ni en remoto (solo `main` en ambos repos).
+- PRs: todos cerrados/mergeados en GitHub. No queda ninguno abierto.
+- Tests: **38 passed** en 6 archivos (`npx vitest run`).
+
+### Microtareas cerradas hoy (2026-08-04)
+| MT | Descripción | Rama | Estado |
+|----|-------------|------|--------|
+| MT-09b | Feedback visual al cambiar estado de pedido inline | `feat/pedidos-feedback-estado` | Mergeado |
+| MT-06.4 | vitest globals + setup Angular + specs ProductoService + OfertaService | `fix/vitest-globals-config` | Mergeado |
+
+### Cobertura de tests al cierre
+| Servicio | Spec | Tests |
+|---|---|---|
+| CategoriaService | `categoria.service.spec.ts` | 6 |
+| ClienteService | `cliente.service.spec.ts` | 8 |
+| PedidoService | `pedido.service.spec.ts` | 6 |
+| ProductoService | `producto.service.spec.ts` | 8 |
+| OfertaService | `oferta.service.spec.ts` | 8 |
+| App | `app.spec.ts` | 2 |
+| **Total** | | **38** |
+
+Servicio sin spec: `auth.service.ts` (integración con Keycloak — requiere estrategia de mock propia).
+
+### Próxima acción recomendada
+Opciones ordenadas por valor/riesgo:
+
+1. **MT-10 — Funcionalidad nueva** (prioridad de negocio): definir con el usuario cuál es la siguiente feature.
+2. **MT-06.5 — Spec de AuthService** (cobertura): mockear `KeycloakService` y cubrir `isAdmin()`, `isAuthenticated()`, `logout()`.
+3. **Limpieza visual o UX** (refinamiento Fase 3): cualquier ajuste menor en UI detectado durante el uso real.
+
+### Arranque rápido para la siguiente sesión
+```
+# 1. Leer este archivo
+cat docs/working-log.md
+
+# 2. Confirmar estado
+git status            # debe decir: nothing to commit
+git log --oneline -5  # verificar último commit
+
+# 3. Correr tests para confirmar que todo sigue verde
+npx vitest run
+
+# 4. Crear rama para la nueva microtarea
+git checkout -b feat/<nombre-mt>
+```
+
+---
+
 ### Sesión
 - Fecha: 2026-08-04
 - Rama: fix/vitest-globals-config (+ MT-06.4a/b)
