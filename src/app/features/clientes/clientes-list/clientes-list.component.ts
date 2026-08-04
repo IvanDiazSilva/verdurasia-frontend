@@ -27,7 +27,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
       <input
         class="input"
         type="text"
-        placeholder="Buscar por nombre o email..."
+        placeholder="Buscar por nombre..."
         [formControl]="busquedaCtrl"
       />
     </div>
