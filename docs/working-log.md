@@ -1,5 +1,36 @@
 ### Sesión
 - Fecha: 2026-08-04
+- Rama: fix/vitest-globals-config (+ MT-06.4a/b)
+- Objetivo: Arreglar configuración de Vitest (globals + TestBed) y añadir specs de ProductoService y OfertaService.
+- Problema:
+  - Todos los specs existentes fallaban con `describe is not defined` (faltaba `globals: true`).
+  - Al añadir `globals: true`, fallaban con `Need to call TestBed.initTestEnvironment()` (faltaba setup file).
+  - `@angular/platform-browser-dynamic` no estaba instalado en el proyecto.
+- Hecho:
+  - Creado `vite.config.ts` con `globals: true`, `environment: jsdom`, `setupFiles: ['src/test-setup.ts']`.
+  - Creado `src/test-setup.ts` que llama `TestBed.initTestEnvironment()` con `BrowserDynamicTestingModule`.
+  - Instalado `@angular/platform-browser-dynamic@21.2.18` como devDependency.
+  - Los 22 specs previos (categoria, cliente, pedido, app) volvieron a verde.
+  - MT-06.4a: `producto.service.spec.ts` — 8 tests (listar sin filtros, con nombre, con categoriaId, con ambos, valores default, obtener, crear POST, actualizar PATCH, eliminar DELETE).
+  - MT-06.4b: `oferta.service.spec.ts` — 8 tests (listar, valores default, vigentes GET, obtener, crear POST, actualizar PATCH, eliminar DELETE).
+  - Total: 38 tests en verde en 6 archivos.
+- Archivos modificados/creados:
+  - `vite.config.ts` (nuevo)
+  - `src/test-setup.ts` (nuevo)
+  - `src/app/core/services/producto.service.spec.ts` (nuevo)
+  - `src/app/core/services/oferta.service.spec.ts` (nuevo)
+  - `package.json` + `package-lock.json` (nueva devDependency)
+- Commit/PR:
+  - Mensaje: `fix(test): configurar vitest globals + setup Angular; añadir specs ProductoService y OfertaService`
+- Pasos para verificar:
+  - `npx vitest run` → 38 passed (6 files).
+- Siguiente paso:
+  - Cubrir `auth.service.ts` o pasar a MT-10 (nueva funcionalidad).
+
+---
+
+### Sesión
+- Fecha: 2026-08-04
 - Rama: feat/pedidos-feedback-estado
 - Objetivo: MT-09b — Feedback visual al cambiar estado de un pedido inline.
 - Problema previo:
