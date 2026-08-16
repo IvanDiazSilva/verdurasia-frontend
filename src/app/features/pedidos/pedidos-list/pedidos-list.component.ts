@@ -42,7 +42,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
       [mensajeVacio]="estadoFiltro() ? 'No hay pedidos con ese estado.' : 'No hay pedidos registrados.'"
     />
 
-    @if (!cargando() && !error() && page()?.content?.length! > 0) {
+    @if (!cargando() && !error() && (page()?.content?.length ?? 0) > 0) {
       <div class="table-wrapper">
         <table class="table">
           <thead>

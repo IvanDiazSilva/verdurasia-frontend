@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -110,6 +111,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
 })
 export class ClientesListComponent implements OnInit {
   private readonly clienteService = inject(ClienteService);
+  private readonly destroyRef     = inject(DestroyRef);
   readonly auth = inject(AuthService);
 
   page          = signal<Page<Cliente> | null>(null);
@@ -125,7 +127,8 @@ export class ClientesListComponent implements OnInit {
 
     this.busquedaCtrl.valueChanges.pipe(
       debounceTime(300),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe((termino) => {
       this.busquedaActual.set(termino ?? '');
       this.paginaActual.set(0);

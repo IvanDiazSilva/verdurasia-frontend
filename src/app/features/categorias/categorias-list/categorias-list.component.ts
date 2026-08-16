@@ -28,7 +28,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
       mensajeVacio="No hay categorías registradas."
     />
 
-    @if (!cargando() && !error() && page()?.content?.length! > 0) {
+    @if (!cargando() && !error() && (page()?.content?.length ?? 0) > 0) {
       <!-- Tabla -->
       <div class="table-wrapper">
         <table class="table">

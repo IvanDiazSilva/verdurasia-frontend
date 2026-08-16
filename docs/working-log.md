@@ -1,4 +1,113 @@
 ---
+
+### Sesión
+- Fecha: 2026-08-16
+- Rama: fix/frontend-phase-4-stability
+- Objetivo: Cerrar una microfase de estabilidad y limpieza técnica del frontend antes de continuar con nuevas mejoras funcionales.
+
+### Trabajo realizado
+- Se cerró la Fase 4 del frontend de VerdurasIA.
+- Se corrigieron las suscripciones de búsqueda en Clientes y Productos.
+- Se añadió `DestroyRef` junto a `takeUntilDestroyed()` para cancelar automáticamente las suscripciones de `busquedaCtrl.valueChanges` al destruir los componentes.
+- Se mantuvieron los operadores existentes de búsqueda, incluyendo `debounceTime(300)` y `distinctUntilChanged()`.
+- Se eliminaron los vestigios no usados de la arquitectura basada en NgModules:
+  - `src/app/core/core.module.ts`
+  - `src/app/shared/shared.module.ts`
+  - `src/app/app.html`
+- Se corrigieron condiciones de renderizado con `?.length!` en los listados de Categorías, Clientes, Productos, Pedidos y Ofertas.
+- Se sustituyó el patrón inseguro `page()?.content?.length! > 0` por `(page()?.content?.length ?? 0) > 0`.
+- Se actualizó este `working-log.md` con el cierre de la fase.
+
+### Validación
+- Tests ejecutados:
+  ```bash
+  npx vitest run
+  ```
+  Resultado: `38 passed (6 files)`.
+- Build de producción ejecutado:
+  ```bash
+  ng build --configuration production
+  ```
+  Resultado: correcto, sin errores.
+- Lint no ejecutado: `angular-eslint` no está configurado en el proyecto.
+- Se mantiene un aviso preexistente durante el build: `js-sha256` usado por `keycloak-js` no es ESM. No está relacionado con los cambios de esta sesión.
+
+### Archivos modificados
+- `src/app/features/clientes/clientes-list/clientes-list.component.ts`
+- `src/app/features/productos/productos-list/productos-list.component.ts`
+- `src/app/features/categorias/categorias-list/categorias-list.component.ts`
+- `src/app/features/pedidos/pedidos-list/pedidos-list.component.ts`
+- `src/app/features/ofertas/ofertas-list/ofertas-list.component.ts`
+- `docs/working-log.md`
+
+### Archivos eliminados
+- `src/app/core/core.module.ts`
+- `src/app/shared/shared.module.ts`
+- `src/app/app.html`
+
+### Pendiente
+- Revisar y corregir las suscripciones creadas por línea en `PedidoFormComponent.agregarLinea()`.
+- Añadir tests para `AuthService`, guards e interceptors.
+- Configurar lint con `angular-eslint`.
+- Unificar la lógica de cambio de estado de pedido entre listado y detalle.
+- Evaluar una mejora responsive básica según el uso real del MVP.
+
+### Siguiente paso
+- Comprobar manualmente que la búsqueda de Clientes y Productos sigue funcionando al entrar, salir y volver a cada pantalla.
+- Revisar y hacer merge de la Pull Request de cierre de Fase 4.
+- Antes de empezar Fase 5, revisar este archivo, ejecutar `git status` y seleccionar una única microtarea.
+
+---
+## CIERRE DE JORNADA — 2026-08-16
+
+### Estado general al cierre
+- **Fase 4** — primera iteración completada (F4-01, F4-02, F4-03).
+- Frontend: `main` — pendiente de commit de esta sesión.
+- Tests: **38 passed** en 6 archivos (`npx vitest run`).
+- Build de producción: OK (sin errores; warning preexistente de `js-sha256` de keycloak-js).
+- Lint: no configurado en el proyecto (`angular-eslint` no instalado).
+
+### Microtareas cerradas hoy (2026-08-16)
+| MT | Descripción | Archivos | Estado |
+|----|-------------|----------|--------|
+| F4-01 | Limpiar suscripciones de búsqueda con `takeUntilDestroyed` | `clientes-list.component.ts`, `productos-list.component.ts` | Completado |
+| F4-02 | Eliminar vestigios NgModule (`CoreModule`, `SharedModule`, `app.html`) | 3 archivos eliminados | Completado |
+| F4-03 | Corregir non-null assertions en componentes de lista | `categorias-list`, `clientes-list`, `productos-list`, `pedidos-list`, `ofertas-list` | Completado |
+
+### Archivos modificados
+- `src/app/features/clientes/clientes-list/clientes-list.component.ts` — añadido `DestroyRef` + `takeUntilDestroyed`
+- `src/app/features/productos/productos-list/productos-list.component.ts` — añadido `DestroyRef` + `takeUntilDestroyed`; corregida non-null assertion
+- `src/app/features/categorias/categorias-list/categorias-list.component.ts` — corregida non-null assertion
+- `src/app/features/pedidos/pedidos-list/pedidos-list.component.ts` — corregida non-null assertion
+- `src/app/features/ofertas/ofertas-list/ofertas-list.component.ts` — corregida non-null assertion
+
+### Archivos eliminados
+- `src/app/core/core.module.ts` — vestigio NgModule, no importado en ningún lugar
+- `src/app/shared/shared.module.ts` — vestigio NgModule, no importado en ningún lugar
+- `src/app/app.html` — archivo vacío (1 línea), no referenciado (template del componente raíz es inline)
+
+### Arranque rápido para la siguiente sesión
+```
+# 1. Leer este archivo
+cat docs/working-log.md
+
+# 2. Confirmar estado
+git status
+git log --oneline -5
+
+# 3. Correr tests
+npx vitest run
+
+# 4. Crear rama para la nueva microtarea
+git checkout -b feat/<nombre-mt>
+```
+
+### Próxima acción recomendada
+1. **MT-06.5 — Spec de AuthService** (cobertura de seguridad): mockear `keycloak-js` y cubrir `isAdmin`, `isAuthenticated`, `getValidToken`, `logout`.
+2. **F4-04 (P0-2) — Suscripciones en `PedidoFormComponent.agregarLinea()`**: refactorizar el `FormArray` para limpiar suscripciones por línea.
+3. **MT-10 — Nueva funcionalidad**: definir con el usuario.
+
+---
 ## CIERRE DE JORNADA — 2026-08-04
 
 ### Estado general al cierre
