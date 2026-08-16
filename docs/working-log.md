@@ -2,6 +2,70 @@
 
 ### Sesión
 - Fecha: 2026-08-16
+- Rama: test/auth-service
+- Objetivo: Añadir cobertura unitaria para `AuthService` como microtarea MT-06.5 de seguridad y calidad frontend.
+
+### Trabajo realizado
+- Se creó `src/app/core/services/auth.service.spec.ts`.
+- Se añadió un mock de `keycloak-js` mediante `vi.mock()` a nivel de módulo.
+- El constructor mock de Keycloak se implementó con una función regular para permitir que `AuthService` lo invoque con `new`.
+- Se usaron `vi.useFakeTimers()` y `vi.useRealTimers()` para aislar los temporizadores asociados a la renovación de token.
+- No se modificó código de producción, configuración de Vitest ni dependencias.
+
+### Cobertura añadida
+- `init()` con usuario autenticado actualiza autenticación, usuario, nombre completo y roles.
+- `init()` sin autenticación conserva el estado inicial.
+- `fullName` usa `preferred_username` si el token no contiene `name`.
+- `isAdmin()` devuelve `true` cuando existe el rol `ADMIN`.
+- `isAdmin()` devuelve `false` cuando no existe el rol `ADMIN`.
+- `getToken()` devuelve el token actual.
+- `getToken()` devuelve una cadena vacía cuando no existe token.
+- `getValidToken()` llama a `updateToken(30)`, devuelve el token renovado y no llama a `login()` cuando la renovación funciona.
+- `getValidToken()` llama a `login()` cuando falla la renovación y devuelve una cadena vacía.
+- `logout()` delega en Keycloak usando `window.location.origin` como `redirectUri`.
+
+### Validación
+- Test específico:
+  ```bash
+  npx vitest run src/app/core/services/auth.service.spec.ts
+  ```
+  Resultado: `10 passed (1 file)`.
+- Suite completa:
+  ```bash
+  npx vitest run
+  ```
+  Resultado: `48 passed (7 files)`.
+- Build de producción:
+  ```bash
+  ng build --configuration production
+  ```
+  Resultado: correcto, sin errores.
+- Validación de formato:
+  ```bash
+  git diff --check
+  ```
+  Resultado: correcto.
+- Se mantiene el aviso preexistente de build: `js-sha256` usado por `keycloak-js` no es ESM. No está relacionado con esta microtarea.
+
+### Archivos modificados
+- `src/app/core/services/auth.service.spec.ts`
+- `docs/working-log.md`
+
+### Pendiente
+- Añadir tests para `authGuard`, `adminGuard`, `authInterceptor` y `httpErrorInterceptor`.
+- Evaluar cobertura de parámetros de `kc.init()` y del método público `login()`.
+- Revisar y corregir suscripciones dinámicas en `PedidoFormComponent.agregarLinea()`.
+- Configurar lint con `angular-eslint`.
+
+### Siguiente paso
+- Revisar y hacer merge de la Pull Request de MT-06.5.
+- Para la siguiente microtarea, elegir entre cobertura de guards/interceptors o limpieza de suscripciones dinámicas en `PedidoFormComponent`.
+- Antes de empezar, actualizar `main`, leer este log y ejecutar `git status`.
+
+---
+
+### Sesión
+- Fecha: 2026-08-16
 - Rama: fix/frontend-phase-4-stability
 - Objetivo: Cerrar una microfase de estabilidad y limpieza técnica del frontend antes de continuar con nuevas mejoras funcionales.
 
