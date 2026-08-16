@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -309,6 +310,8 @@ export class PedidoFormComponent implements OnInit {
   /** Signal auxiliar que incrementamos manualmente para forzar recompute de totalEstimado. */
   private _totalVersion = signal(0);
 
+  private suscripcionesCantidad = new Map<AbstractControl, Subscription>();
+
   ngOnInit(): void {
     this.cargarClientes();
     this.cargarProductos();
@@ -316,17 +319,28 @@ export class PedidoFormComponent implements OnInit {
     this.agregarLinea();
   }
 
+  ngOnDestroy(): void {
+    this.suscripcionesCantidad.forEach(sub => sub.unsubscribe());
+    this.suscripcionesCantidad.clear();
+  }
+
   agregarLinea(): void {
     const grupo = this.fb.group({
       productoId: [null as number | null, Validators.required],
       cantidad:   [1, [Validators.required, Validators.min(1)]]
     });
-    // Recalcular total cuando cambia cantidad
-    grupo.get('cantidad')!.valueChanges.subscribe(() => this._totalVersion.update(v => v + 1));
+    // Suscribirse a cambios de cantidad y guardar referencia
+    const ctrlCantidad = grupo.get('cantidad')!;
+    this.suscripcionesCantidad.set(ctrlCantidad, ctrlCantidad.valueChanges.subscribe(() => this._totalVersion.update(v => v + 1)));
     this.lineas.push(grupo);
   }
 
   eliminarLinea(index: number): void {
+    const grupo = this.lineas.at(index) as FormGroup;
+    const ctrlCantidad = grupo.get('cantidad')!;
+    const sub = this.suscripcionesCantidad.get(ctrlCantidad);
+    sub?.unsubscribe();
+    this.suscripcionesCantidad.delete(ctrlCantidad);
     this.lineas.removeAt(index);
     this._totalVersion.update(v => v + 1);
   }
