@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -52,7 +53,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
       mensajeVacio="No hay productos registrados."
     />
 
-    @if (!cargando() && !error() && page()?.content?.length! > 0) {
+    @if (!cargando() && !error() && (page()?.content?.length ?? 0) > 0) {
       <!-- Tabla -->
       <div class="table-wrapper">
         <table class="table">
@@ -127,8 +128,9 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
   `]
 })
 export class ProductosListComponent implements OnInit {
-  private readonly productoService = inject(ProductoService);
+  private readonly productoService  = inject(ProductoService);
   private readonly categoriaService = inject(CategoriaService);
+  private readonly destroyRef       = inject(DestroyRef);
   readonly auth = inject(AuthService);
 
   page    = signal<Page<Producto> | null>(null);
@@ -150,7 +152,8 @@ export class ProductosListComponent implements OnInit {
 
     this.busquedaCtrl.valueChanges.pipe(
       debounceTime(350),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => {
       this.paginaActual.set(0);
       this.cargar();
