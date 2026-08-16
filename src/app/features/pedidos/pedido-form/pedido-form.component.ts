@@ -299,10 +299,11 @@ export class PedidoFormComponent implements OnInit {
 
   /** Total estimado calculado en el cliente con los precios cargados. */
   totalEstimado = computed(() => {
-    // Se recalcula al leer señales; aquí lo computamos directamente sobre el FormArray.
-    // Usamos un truco: accedemos a un signal de versión para que computed reaccione
-    // cuando el usuario cambia inputs (no es reactivo por defecto con FormArray).
-    return this._totalVersion(); // dummy read para forzar recompute
+    // Leemos _totalVersion() para registrar la dependencia reactiva:
+    // FormArray no es un signal, así que forzamos el recompute manualmente
+    // incrementando _totalVersion cada vez que cambia alguna línea.
+    this._totalVersion();
+    return this.calcularTotal();
   });
 
   /** Signal auxiliar que incrementamos manualmente para forzar recompute de totalEstimado. */
