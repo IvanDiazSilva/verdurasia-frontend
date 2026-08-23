@@ -632,6 +632,39 @@ git checkout -b feat/<nombre-mt>
 ---
 
 ### Sesión
+- Fecha: 2026-08-23
+- Rama: main
+- Objetivo: Añadir suite completa de tests unitarios para AuthService (MT-06.5) sin modificar código de producción.
+
+### Trabajo realizado
+- Se creó `src/app/core/services/auth.service.spec.ts` con 7 tests nuevos.
+- Se cubrieron cases límite: `isAdmin` con `tokenParsed`/`realmAccess`/`roles` undefined, `init()` state, `logout` error handling.
+- Mocking de `keycloak-js` mediante `vi.mock()` con `kcMock` object y `vi.fn()`.
+- `vi.useFakeTimers()` en `beforeEach` para aislar `setTimeout` de `scheduleTokenRefresh()`.
+- `vi.resetAllMocks()` por test para aislamiento; `vi.useRealTimers()` en `afterEach`.
+- Sin credenciales reales, llamadas de red ni modificaciones en producción.
+- Build de producción verificado: correcto, solo warning preexistente `js-sha256` de keycloak-js.
+
+### Validación
+- Test individual: `npx vitest run src/app/core/services/auth.service.spec.ts` → `17 passed (1 file)`.
+- Suite completa: `npx vitest run` → `64 passed (8 files)`.
+- Build producción: `ng build --configuration production` → correcto.
+
+### Archivos modificados
+- `src/app/core/services/auth.service.spec.ts` — 7 tests añadidos.
+
+### Pendiente
+- Abrir y mergear Pull Request de MT-06.5.
+- Elegir siguiente microtarea: F4-04 (suscripciones `PedidoFormComponent.agregarLinea()`) o MT-10 (nueva funcionalidad).
+
+### Siguiente paso
+- Revisar y hacer merge de la Pull Request de MT-06.5.
+- Para la siguiente microtarea, elegir entre F4-04 o MT-10.
+- Antes de empezar, actualizar `main`, leer este log y ejecutar `git status`.
+
+---
+
+### Sesión
 - Fecha: 2026-07-30
 - Rama: main
 - Objetivo: Crear un log de trabajo dentro del repo para retomar sesiones rápido y no perder el hilo entre fases.

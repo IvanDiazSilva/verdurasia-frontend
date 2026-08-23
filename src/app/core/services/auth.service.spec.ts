@@ -105,7 +105,72 @@ describe('AuthService', () => {
     expect(service.fullName()).toBe('ivan');
   });
 
-  // ── isAdmin ────────────────────────────────────────────────────────────────
+  // ── isAdmin edge cases ─────────────────────────────────────────────────────
+
+  it('isAdmin() should return false when tokenParsed is undefined', async () => {
+    kcMock.init.mockResolvedValue(true);
+    kcMock.updateToken.mockResolvedValue(false);
+    kcMock.tokenParsed = undefined;
+
+    await service.init();
+
+    expect(service.isAdmin()).toBe(false);
+  });
+
+  it('isAdmin() should return false when realmAccess is undefined', async () => {
+    kcMock.init.mockResolvedValue(true);
+    kcMock.updateToken.mockResolvedValue(false);
+    kcMock.tokenParsed = { preferred_username: 'user', exp: Math.ceil(Date.now() / 1000) + 3600 };
+
+    await service.init();
+
+    expect(service.isAdmin()).toBe(false);
+  });
+
+  it('isAdmin() should return false when roles array is empty', async () => {
+    kcMock.init.mockResolvedValue(true);
+    kcMock.updateToken.mockResolvedValue(false);
+    kcMock.tokenParsed = { preferred_username: 'user', exp: Math.ceil(Date.now() / 1000) + 3600, realm_access: { roles: [] } };
+
+    await service.init();
+
+    expect(service.isAdmin()).toBe(false);
+  });
+
+  it('isAdmin() should return false when realmAccess.roles is undefined', async () => {
+    kcMock.init.mockResolvedValue(true);
+    kcMock.updateToken.mockResolvedValue(false);
+    kcMock.tokenParsed = { preferred_username: 'user', exp: Math.ceil(Date.now() / 1000) + 3600, realm_access: undefined };
+
+    await service.init();
+
+    expect(service.isAdmin()).toBe(false);
+  });
+
+  // ── init / isAuthenticated ────────────────────────────────────────────────
+
+  it('init() should set isAuthenticated to true when Keycloak returns authenticated', async () => {
+    kcMock.init.mockResolvedValue(true);
+    kcMock.updateToken.mockResolvedValue(false);
+    kcMock.tokenParsed = {
+      preferred_username: 'ivan',
+      name: 'Iván Díaz',
+      exp: Math.ceil(Date.now() / 1000) + 3600,
+      realm_access: { roles: ['USER'] },
+    };
+
+    await service.init();
+
+    expect(service.isAuthenticated()).toBe(true);
+  });
+
+  it('init() should set isAuthenticated to false when Keycloak returns unauthenticated', async () => {
+    kcMock.init.mockResolvedValue(false);
+
+    await service.init();
+
+    expect(service.isAuthenticated()).toBe(false);
+  });
 
   it('isAdmin() should return true when roles include ADMIN', async () => {
     kcMock.tokenParsed = {
@@ -178,6 +243,14 @@ describe('AuthService', () => {
     service.logout();
 
     expect(kcMock.logout).toHaveBeenCalledTimes(1);
+    expect(kcMock.logout).toHaveBeenCalledWith({ redirectUri: window.location.origin });
+  });
+
+  it('logout() should handle kc.logout rejection gracefully', () => {
+    kcMock.logout.mockRejectedValue(new Error('Logout failed'));
+
+    expect(async () => service.logout()).not.toThrow();
+
     expect(kcMock.logout).toHaveBeenCalledWith({ redirectUri: window.location.origin });
   });
 });
