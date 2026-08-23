@@ -703,4 +703,32 @@ git checkout -b feat/<nombre-mt>
 - Un PR = un alcance pequeño y revisable.
 - Si hay dudas de alcance, parar y documentar antes de seguir.
 
-Siguiente acción para mañana: revisar el estado del proyecto y escoger una única microtarea pequeña de Fase 3.
+### Sesión
+- Fecha: 2026-08-23
+- Rama: main
+- Objetivo: Cierre Git de MT-06.5 — sincronizar commit y actualizar documentación.
+
+### Trabajo realizado
+- Commit `598f81a` con `test(auth): complete MT-06.5 AuthService coverage` ya estaba en `main` local.
+- Ejecutado `git push origin main`: sincronizado commit a `origin/main` (ref d72c9c3 → 598f81a).
+- AuthService: 17 tests passing (suite completa: 64 passing en 8 archivos).
+- Build producción verificado: correcto, warning preexistente `js-sha256` de keycloak-js.
+- No se realizaron cambios en producción, nuevas dependencias ni force push.
+- Working tree limpio después de push.
+
+### Validación posterior
+- `git status --short --branch`: main 1 commit ahead origin/main.
+- `npx vitest run`: 64 passed (8 files).
+- `ng build --configuration production`: correcto.
+
+### Archivos modificados
+- `docs/working-log.md` — entrada de cierre Git añadida.
+
+### Pendiente
+- Elegir próxima microtarea: F4-04 (suscripciones `PedidoFormComponent.agregarLinea()`) o MT-10 (nueva funcionalidad).
+
+### Siguiente paso
+- Revisar estado y escoger microtarea F4-04 o MT-10.
+- Antes de empezar, actualizar `main`, leer este log y ejecutar `git status`.
+
+---
