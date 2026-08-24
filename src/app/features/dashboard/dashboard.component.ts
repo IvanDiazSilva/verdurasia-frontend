@@ -27,7 +27,7 @@ interface Tarjeta {
       <span class="fecha">{{ hoy }}</span>
     </div>
 
-    <!-- Tarjetas de resumen -->
+<!-- Tarjetas de resumen -->
     @if (cargando()) {
       <div class="state-msg">Cargando estadísticas...</div>
     } @else if (error()) {
@@ -36,6 +36,19 @@ interface Tarjeta {
       <div class="tarjetas">
         @for (t of tarjetas(); track t.titulo) {
           <a [routerLink]="t.enlace" class="tarjeta" [style.--color]="t.color">
+            <div class="tarjeta__icono">{{ t.icono }}</div>
+            <div class="tarjeta__body">
+              <div class="tarjeta__valor">{{ t.valor ?? '—' }}</div>
+              <div class="tarjeta__titulo">{{ t.titulo }}</div>
+            </div>
+          </a>
+        }
+      </div>
+
+      <!-- Métricas adicionales -->
+      <div class="tarjetas-adicionales">
+        @for (t of tarjetas() | slice:6; track t.titulo) {
+          <a [routerLink]="t.enlace" class="tarjeta tarjeta--adicional" [style.--color]="t.color">
             <div class="tarjeta__icono">{{ t.icono }}</div>
             <div class="tarjeta__body">
               <div class="tarjeta__valor">{{ t.valor ?? '—' }}</div>
@@ -252,6 +265,39 @@ interface Tarjeta {
     .oferta-card__producto { font-size: 0.78rem; color: #6b7280; margin-bottom: 0.2rem; }
     .oferta-card__producto--global { color: #9ca3af; font-style: italic; }
     .oferta-card__fechas { font-size: 0.75rem; color: #9ca3af; }
+    /* ---- Tarjetas adicionales ---- */
+    .tarjetas-adicionales {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .tarjeta--adicional {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-left: 4px solid var(--color, #2d6a4f);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      text-decoration: none;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .tarjeta--adicional:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
+    .tarjeta--adicional .tarjeta__icono { font-size: 1.6rem; line-height: 1; }
+    .tarjeta--adicional .tarjeta__valor {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1;
+    }
+    .tarjeta--adicional .tarjeta__titulo {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 0.2rem;
+      font-weight: 500;
+    }
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -292,6 +338,24 @@ export class DashboardComponent implements OnInit {
           return b.id - a.id;
         });
 
+        const importeTotalHoy = pedidos.content
+          .filter(p => p.createdAt && new Date(p.createdAt).toLocaleDateString() === new Date().toLocaleDateString())
+          .reduce((sum, p) => sum + (p.total ?? 0), 0);
+
+        const pedidosHoy = pedidos.content.filter(p => p.createdAt && new Date(p.createdAt).toLocaleDateString() === new Date().toLocaleDateString()).length;
+
+        // Calcular productos más vendidos a partir de los items de los pedidos
+        const totalPorProducto = new Map<number, number>();
+        pedidos.content.forEach(p => {
+          p.items?.forEach(item => {
+            totalPorProducto.set(item.productoId, (totalPorProducto.get(item.productoId) ?? 0) + item.cantidad);
+          });
+        });
+        const productosMasVendidos = Array.from(totalPorProducto.entries())
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([productoId, cantidad]) => ({ productoId, cantidad }));
+
         this.tarjetas.set([
           {
             titulo: 'Pendientes',
@@ -327,6 +391,27 @@ export class DashboardComponent implements OnInit {
             enlace: '/ofertas',
             icono:  '🏷️',
             color:  '#5b21b6',
+          },
+          {
+            titulo: 'Pedidos hoy',
+            valor:  pedidosHoy,
+            enlace: '/pedidos',
+            icono:  '📅',
+            color:  '#2d3748',
+          },
+          {
+            titulo: 'Importe hoy',
+            valor:  importeTotalHoy,
+            enlace: '/pedidos',
+            icono:  '💰',
+            color:  '#2d3748',
+          },
+          {
+            titulo: 'Productos top',
+            valor:  productosMasVendidos.length > 0 ? productosMasVendidos[0].cantidad : 0,
+            enlace: '/productos',
+            icono:  '📈',
+            color:  '#2d3748',
           },
         ]);
         this.ultimosPedidos.set(ordenados);
