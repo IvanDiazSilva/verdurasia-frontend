@@ -2,10 +2,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PedidoService } from '../../../core/services/pedido.service';
+import { PedidoStateService } from '../../../core/services/pedido-state.service';
 import {
   Pedido,
   EstadoPedido,
-  ESTADOS_PEDIDO,
   ESTADO_LABEL,
 } from '../../../core/models/pedido.model';
 import { Page } from '../../../core/models/page.model';
@@ -163,7 +163,7 @@ export class PedidosListComponent implements OnInit {
   /** Mensaje de error del último cambio de estado fallido. */
   errorEstadoMsg  = signal<string | null>(null);
 
-  readonly estados = ESTADOS_PEDIDO;
+  readonly pedidoStateService = inject(PedidoStateService);
   readonly etiqueta = (e: EstadoPedido) => ESTADO_LABEL[e];
 
   ngOnInit(): void {
@@ -186,6 +186,16 @@ export class PedidosListComponent implements OnInit {
     const nuevoEstado = (event.target as HTMLSelectElement).value as EstadoPedido;
     if (nuevoEstado === pedido.estado) {
       this.cambiandoEstado.set(null);
+      return;
+    }
+
+    // Validar el cambio de estado usando el servicio unificado
+    const validacion = this.pedidoStateService.validarCambio(pedido.estado, nuevoEstado);
+    if (!validacion.valido) {
+      this.guardandoEstado.set(null);
+      this.cambiandoEstado.set(null);
+      this.errorEstadoId.set(pedido.id);
+      this.errorEstadoMsg.set(validacion.motivo ?? 'No se puede cambiar el estado.');
       return;
     }
 

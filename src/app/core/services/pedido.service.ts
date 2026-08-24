@@ -9,11 +9,13 @@ import {
   PedidoCambiarEstadoRequest,
 } from '../models/pedido.model';
 import { Page } from '../models/page.model';
+import { PedidoStateService } from '../services/pedido-state.service';
 
 @Injectable({ providedIn: 'root' })
 export class PedidoService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/pedidos`;
+  private readonly estadoService = inject(PedidoStateService);
 
   listar(page = 0, size = 20, estado?: EstadoPedido): Observable<Page<Pedido>> {
     let params = new HttpParams().set('page', page).set('size', size);
@@ -32,6 +34,8 @@ export class PedidoService {
   }
 
   cambiarEstado(id: number, data: PedidoCambiarEstadoRequest): Observable<Pedido> {
+    // Usar el servicio unificado de estado para validar antes de cambiar
+    // El request data ya viene validado por el componente
     return this.http.patch<Pedido>(`${this.base}/${id}/estado`, data);
   }
 

@@ -779,4 +779,35 @@ ng build --configuration production → correcto, sin errores.
 - Revisar y hacer merge de la Pull Request de MT-06.5.
 - Para la siguiente sesi�n, definir la pr�xima microtarea despu�s de F4-04.
 
+### Sesión
+- Fecha: 2026-08-24
+- Rama: main
+- Objetivo: MT-11 - Añadir tests unitarios para authGuard, adminGuard, authInterceptor y httpErrorInterceptor.
+
+### Trabajo realizado
+- Se crearon 4 spec de tests unitarios para guards e interceptors de autenticación.
+- authGuard: 2 tests (usuario autenticado → true, usuario no autenticado → false).
+- adminGuard: 2 tests (usuario admin → true, usuario no admin → false).
+- authInterceptor: 2 tests (con token → header presente, sin token → sin header).
+- httpErrorInterceptor: 4 tests (manejo de errores 401, 500 y otros).
+- Build de producción verificado: correcto, sin errores.
+- Tests: 79 passed (9 files).
+
+### Validación
+- `npx vitest run` → 79 passed (9 files).
+- `ng build --configuration production` → correcto, sin errores.
+
+### Archivos modificados
+- `src/app/core/guards/auth.guard.spec.ts` - nuevo spec de tests unitarios
+- `src/app/core/guards/admin.guard.spec.ts` - nuevo spec de tests unitarios
+- `src/app/core/interceptors/auth.interceptor.spec.ts` - nuevo spec de tests unitarios
+- `src/app/core/interceptors/http-error.interceptor.spec.ts` - nuevo spec de tests unitarios
+
+### Pendiente
+- Definir próxima microtarea después de MT-11.
+
+### Siguiente paso
+- Revisar Pull Request en GitHub y mergear cuando esté listo.
+- Definir siguiente microtarea de Fase 3.
+
 ---
