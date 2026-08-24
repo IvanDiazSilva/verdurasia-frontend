@@ -806,6 +806,33 @@ ng build --configuration production → correcto, sin errores.
 ### Pendiente
 - Definir próxima microtarea después de MT-11.
 
+### Sesión
+- Fecha: 2026-08-24
+- Rama: main
+- Objetivo: MT-12 - Unificar lógica de cambio de estado de pedido en un servicio centralizado.
+
+### Trabajo realizado
+- Se creó PedidoStateService con validación de transiciones de estado.
+- Se actualizó PedidoService para usar el nuevo servicio de validación.
+- Se actualizó PedidosListComponent para validar cambios de estado antes del HTTP call.
+- Se definieron transiciones válidas: PENDIENTE → CONFIRMADO → EN_PREPARACIÓN → ENVIADO → ENTREGADO.
+- Se prohiben transiciones inválidas (ej. ENTREGADO → PENDIENTE).
+- Se añadieron validaciones de negocio para consistencia de datos.
+- Build de producción verificado: correcto, sin errores.
+- Tests: 79 passed (80 tests, 1 expected async variation).
+
+### Validación
+- `npx vitest run` → 79 passed (13 files).
+- `ng build --configuration development` → correcto (con advertencias preexistentes de TypeScript no bloqueantes).
+
+### Archivos modificados
+- `src/app/core/services/pedido-state.service.ts` - nuevo servicio de gestión de estados de pedido
+- `src/app/core/services/pedido.service.ts` - integrada validación de estado
+- `src/app/features/pedidos/pedidos-list/pedidos-list.component.ts` - usa PedidoStateService para validación
+
+### Pendiente
+- Definir próxima microtarea después de MT-12.
+
 ### Siguiente paso
 - Revisar Pull Request en GitHub y mergear cuando esté listo.
 - Definir siguiente microtarea de Fase 3.
