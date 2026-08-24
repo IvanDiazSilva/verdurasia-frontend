@@ -662,6 +662,27 @@ git checkout -b feat/<nombre-mt>
 - Para la siguiente microtarea, elegir entre F4-04 o MT-10.
 - Antes de empezar, actualizar `main`, leer este log y ejecutar `git status`.
 
+### Sesión
+- Fecha: 2026-08-24
+- Rama: main
+- Objetivo: F4-04 — Refactorizar suscripciones dinámicas en `PedidoFormComponent.agregarLinea()` para limpiar suscripciones por línea y evitar fugas de memoria.
+
+### Trabajo realizado
+- Se identificaron las suscripciones activas en el método `agregarLinea()` del `PedidoFormComponent`.
+- Se añadió `DestroyRef` y `takeUntilDestroyed()` para cancelar automáticamente las suscripciones al destruir el componente.
+- Se verificó que el build de producción no tiene errores.
+
+### Validación
+- `npx vitest run` → tests passing.
+- `ng build --configuration production` → correcto, sin errores.
+
+### Archivos modificados
+- `src/app/features/pedidos/pedido-form/pedido-form.component.ts` — añadido `DestroyRef` + `takeUntilDestroyed`
+
+### Pendiente
+- Añadir tests para el componente PedidoForm con la nueva lógica de destrucción.
+- Evaluar próxima microtarea: MT-10 (nueva funcionalidad).
+
 ---
 
 ### Sesión
@@ -730,5 +751,32 @@ git checkout -b feat/<nombre-mt>
 ### Siguiente paso
 - Revisar estado y escoger microtarea F4-04 o MT-10.
 - Antes de empezar, actualizar `main`, leer este log y ejecutar `git status`.
+
+---
+### Sesión
+- Fecha: 2026-08-24
+- Rama: main
+- Objetivo: F4-04 — Refactorizar suscripciones dinámicas en `PedidoFormComponent.agregarLinea()` para limpiar suscripciones por línea y evitar fugas de memoria.
+
+### Trabajo realizado
+- Se identificaron las suscripciones activas en el método `agregarLinea()` del `PedidoFormComponent`.
+- Se a�adi� DestroyRef y 	akeUntilDestroyed() para cancelar autom�ticamente las suscripciones al destruir el componente.
+
+### Validaci�n
+- 
+npx vitest run → tests passing.
+- 
+ng build --configuration production → correcto, sin errores.
+
+### Archivos modificados
+- src/app/features/pedidos/pedido-form/pedido-form.component.ts � a�adido DestroyRef + 	akeUntilDestroyed`n
+### Pendiente
+- A�adir tests para el componente PedidoForm con la nueva l�gica de destrucci�n.
+- Evaluar pr�xima microtarea: MT-10 (nueva funcionalidad).
+
+### Siguiente paso
+- Probar manualmente la b�squeda de Clientes y Productos al entrar, salir y volver a cada pantalla.
+- Revisar y hacer merge de la Pull Request de MT-06.5.
+- Para la siguiente sesi�n, definir la pr�xima microtarea despu�s de F4-04.
 
 ---
