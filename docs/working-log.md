@@ -830,11 +830,28 @@ ng build --configuration production → correcto, sin errores.
 - `src/app/core/services/pedido.service.ts` - integrada validación de estado
 - `src/app/features/pedidos/pedidos-list/pedidos-list.component.ts` - usa PedidoStateService para validación
 
+### Sesión
+- Fecha: 2026-08-25
+- Rama: mt-14-corregir-test-dashboard
+- Objetivo: Corregir el spec del DashboardComponent para que los tests configuren correctamente los servicios usados por ngOnInit().
+
+### Trabajo realizado
+- Análisis de dashboard.component.ts y dashboard.component.spec.ts.
+- Implementación de mocks de ProductoService, ClienteService, PedidoService y OfertaService.
+- Configuración del TestBed con los providers necesarios.
+- Verificación de que los 6 tests del dashboard pasan.
+
+### Validación
+- 6 tests del dashboard en verde.
+- PR fusionado en main.
+
+### Archivos modificados
+- src/app/features/dashboard/dashboard.component.spec.ts
+
 ### Pendiente
-- Definir próxima microtarea después de MT-12.
+- Ninguno para esta microtarea.
 
 ### Siguiente paso
-- Revisar Pull Request en GitHub y mergear cuando esté listo.
-- Definir siguiente microtarea de Fase 3.
+- F4-04 — Refactorizar suscripciones dinámicas en PedidoFormComponent.agregarLinea().
 
 ---
