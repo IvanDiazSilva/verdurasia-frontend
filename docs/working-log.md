@@ -879,3 +879,38 @@ ng build --configuration production â†’ correcto, sin errores.
 
 ### Siguiente paso
 - Definir MT-10 (nueva funcionalidad) o continuar con otra microtarea pendiente del working-log.
+# # #   S e s i ó n 
+ -   F e c h a :   2 0 2 6 - 0 8 - 2 5 
+ -   R a m a :   m a i n 
+ -   O b j e t i v o :   P r e p a r a r   l a   i n t e r f a z   p a r a   p r u e b a s   r e a l e s   c o n   c l i e n t a s   e n   P e r ú   m o s t r a n d o   f e c h a / h o r a   y   m o n e d a   P E N . 
+ 
+ # # #   T r a b a j o   r e a l i z a d o 
+ -   I m p l e m e n t a d o   r e l o j   d e   f e c h a   y   h o r a   e n   t i e m p o   r e a l   e n   e l   h e a d e r   ( t o p b a r ) . 
+ -   F e c h a / h o r a   p r e s e n t a d a   e n   f o r m a t o   e s - P E   ( d d / M M / y y y y   ·   H H : m m : s s ) . 
+ -   A p l i c a d o   f o r m a t o   d e   f e c h a   y   h o r a   l o c a l e   p a r a   P e r ú . 
+ -   A c t u a l i z a d a   l a   p r e s e n t a c i ó n   v i s u a l   d e   e u r o s   a   s o l e s   p e r u a n o s   S /   e n   9   c o m p o n e n t e s   a f e c t a d o s . 
+ -   C o n f i r m a d o   q u e   n o   c a m b i a n   v a l o r e s   n u m é r i c o s   n i   l ó g i c a   d e   n e g o c i o . 
+ 
+ # # #   V a l i d a c i ó n 
+ -   n p x   t s c   - - n o E m i t   s i n   e r r o r e s . 
+ -   n p x   v i t e s t   r u n :   8 0 / 8 0   t e s t s   e n   v e r d e . 
+ -   n p x   n g   b u i l d   - - c o n f i g u r a t i o n   p r o d u c t i o n   c o r r e c t o ,   s i n   e r r o r e s . 
+ -   P R   f u s i o n a d o   e n   m a i n   ( P R   # 3 3 ) . 
+ 
+ # # #   A r c h i v o s   m o d i f i c a d o s 
+ -   s r c / a p p / l a y o u t / t o p b a r / t o p b a r . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / p r o d u c t o s / p r o d u c t o s - l i s t / p r o d u c t o s - l i s t . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / p r o d u c t o s / p r o d u c t o - f o r m / p r o d u c t o - f o r m . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / p e d i d o s / p e d i d o s - l i s t / p e d i d o s - l i s t . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / p e d i d o s / p e d i d o - f o r m / p e d i d o - f o r m . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / p e d i d o s / p e d i d o - d e t a l l e / p e d i d o - d e t a l l e . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / d a s h b o a r d / d a s h b o a r d . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / o f e r t a s / o f e r t a s - l i s t / o f e r t a s - l i s t . c o m p o n e n t . t s 
+ -   s r c / a p p / f e a t u r e s / o f e r t a s / o f e r t a - f o r m / o f e r t a - f o r m . c o m p o n e n t . t s 
+ 
+ # # #   P e n d i e n t e 
+ -   I m p l e m e n t a r   i n t e r n a c i o n a l i z a c i ó n   E S / E N   e n   u n a   f u t u r a   m i c r o t a r e a . 
+ 
+ # # #   S i g u i e n t e   p a s o 
+ -   M T - 1 6      S e l e c t o r   d e   i d i o m a   E S / E N   y   t r a d u c c i ó n   i n i c i a l   d e   l a   i n t e r f a z .  
+ 
