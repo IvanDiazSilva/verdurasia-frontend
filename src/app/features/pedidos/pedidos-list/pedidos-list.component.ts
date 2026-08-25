@@ -7,6 +7,7 @@ import {
   Pedido,
   EstadoPedido,
   ESTADO_LABEL,
+  ESTADOS_PEDIDO,
 } from '../../../core/models/pedido.model';
 import { Page } from '../../../core/models/page.model';
 import { AuthService } from '../../../core/services/auth.service';
