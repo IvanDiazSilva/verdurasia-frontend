@@ -73,7 +73,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
               <tr>
                 <td class="td--nombre">{{ p.nombre }}</td>
                 <td>{{ p.categoriaNombre ?? '—' }}</td>
-                <td>{{ p.precio | number:'1.2-2' }} €</td>
+                <td>{{ p.precio | number:'1.2-2' }} S/</td>
                 <td>{{ p.stock }}</td>
                 <td>{{ p.unidad }}</td>
                 <td>

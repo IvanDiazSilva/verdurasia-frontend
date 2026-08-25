@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-topbar',
@@ -11,6 +13,7 @@ import { AuthService } from '../../core/services/auth.service';
       <span class="topbar__section-title">{{ title }}</span>
       <div class="topbar__actions">
         <span class="topbar__user">{{ auth.fullName() || auth.username() }}</span>
+        <span class="topbar__relogio">{{ relogio }}</span>
         @if (auth.isAdmin()) {
           <span class="topbar__role topbar__role--admin">ADMIN</span>
         } @else {
@@ -72,9 +75,48 @@ import { AuthService } from '../../core/services/auth.service';
       color: #991b1b;
       border-color: #fca5a5;
     }
+    .topbar__relogio {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-left: 0.5rem;
+    }
   `]
 })
-export class TopbarComponent {
+export class TopbarComponent implements OnInit, OnDestroy {
   readonly auth = inject(AuthService);
   readonly title = 'VerdurasIA';
+
+  private relogioAtual = signal<Date>(new Date());
+  private intervalId: number | null = null;
+  private readonly destroy$ = new Subject<void>();
+
+  ngOnInit(): void {
+    this.intervalId = window.setInterval(() => {
+      this.relogioAtual.set(new Date());
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+    }
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  get relogio(): string {
+    const agora = this.relogioAtual();
+    const data = agora.toLocaleDateString('es-PE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    const hora = agora.toLocaleTimeString('es-PE', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    return `${data} · ${hora}`;
+  }
 }

@@ -91,7 +91,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
                     }
                   }
                 </td>
-                <td class="text-right">{{ p.total | number:'1.2-2' }} €</td>
+                <td class="text-right">{{ p.total | number:'1.2-2' }} S/</td>
                 <td>{{ p.items.length }} artículo{{ p.items.length === 1 ? '' : 's' }}</td>
                 <td class="td--fecha">{{ p.createdAt | date:'dd/MM/yyyy' }}</td>
                 <td class="td--actions">

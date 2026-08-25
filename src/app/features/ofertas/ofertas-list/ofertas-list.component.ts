@@ -51,7 +51,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
                   <span class="tipo-label">{{ tipoLabel(o) }}</span>
                 </td>
                 <td class="text-right td--descuento">
-                  {{ o.descuento }}{{ o.tipo === 'PORCENTAJE' ? '%' : ' €' }}
+                  {{ o.descuento }}{{ o.tipo === 'PORCENTAJE' ? '%' : ' S/' }}
                 </td>
                 <td>{{ o.productoNombre ?? '— Global —' }}</td>
                 <td class="td--fecha">{{ o.fechaInicio | date:'dd/MM/yyyy' }}</td>

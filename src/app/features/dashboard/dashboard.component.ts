@@ -92,7 +92,7 @@ interface Tarjeta {
                         {{ estadoLabel(p.estado) }}
                       </span>
                     </td>
-                    <td class="text-right">{{ p.total | number:'1.2-2' }} €</td>
+                    <td class="text-right">{{ p.total | number:'1.2-2' }} S/</td>
                     <td class="td--fecha">{{ p.createdAt | date:'dd/MM/yyyy' }}</td>
                   </tr>
                 }
@@ -117,7 +117,7 @@ interface Tarjeta {
               <div class="oferta-card">
                 <div class="oferta-card__nombre">{{ o.nombre }}</div>
                 <div class="oferta-card__descuento">
-                  {{ o.descuento }}{{ o.tipo === 'PORCENTAJE' ? '%' : ' €' }} dto.
+                  {{ o.descuento }}{{ o.tipo === 'PORCENTAJE' ? '%' : ' S/' }} dto.
                 </div>
                 @if (o.productoNombre) {
                   <div class="oferta-card__producto">{{ o.productoNombre }}</div>

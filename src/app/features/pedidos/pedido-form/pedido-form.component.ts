@@ -101,7 +101,7 @@ import { Producto } from '../../../core/models/producto.model';
                   >
                     <option [ngValue]="null">— Selecciona producto —</option>
                     @for (p of productos(); track p.id) {
-                      <option [ngValue]="p.id">{{ p.nombre }} ({{ p.precio | number:'1.2-2' }} €/{{ p.unidad }})</option>
+                      <option [ngValue]="p.id">{{ p.nombre }} ({{ p.precio | number:'1.2-2' }} S/{{ p.unidad }})</option>
                     }
                   </select>
                 }
@@ -135,13 +135,13 @@ import { Producto } from '../../../core/models/producto.model';
               <!-- Precio unitario (informativo) -->
               <div class="field field--precio">
                 <label class="label">Precio unit.</label>
-                <div class="precio-display">{{ precioLinea($index) | number:'1.2-2' }} €</div>
+                <div class="precio-display">{{ precioLinea($index) | number:'1.2-2' }} S/</div>
               </div>
 
               <!-- Subtotal (informativo) -->
               <div class="field field--subtotal">
                 <label class="label">Subtotal</label>
-                <div class="precio-display precio-display--subtotal">{{ subtotalLinea($index) | number:'1.2-2' }} €</div>
+                <div class="precio-display precio-display--subtotal">{{ subtotalLinea($index) | number:'1.2-2' }} S/</div>
               </div>
 
               <!-- Eliminar línea -->
@@ -159,7 +159,7 @@ import { Producto } from '../../../core/models/producto.model';
         @if (lineas.length > 0) {
           <div class="total-row">
             <span class="total-label">Total estimado</span>
-            <span class="total-valor">{{ totalEstimado() | number:'1.2-2' }} €</span>
+            <span class="total-valor">{{ totalEstimado() | number:'1.2-2' }} S/</span>
           </div>
         }
 
