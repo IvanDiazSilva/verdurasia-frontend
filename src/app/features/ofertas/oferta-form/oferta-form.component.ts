@@ -69,7 +69,7 @@ import { TipoOferta } from '../../../core/models/oferta.model';
               <label class="label" for="tipo">Tipo de descuento <span class="required">*</span></label>
               <select id="tipo" class="input" formControlName="tipo">
                 <option value="PORCENTAJE">% Porcentaje</option>
-                <option value="MONTO_FIJO">€ Monto fijo</option>
+                <option value="MONTO_FIJO">S/ Monto fijo</option>
               </select>
             </div>
 
@@ -77,7 +77,7 @@ import { TipoOferta } from '../../../core/models/oferta.model';
               <label class="label" for="descuento">
                 Descuento <span class="required">*</span>
                 <span class="label-hint">
-                  {{ form.get('tipo')?.value === 'PORCENTAJE' ? '(0.01 – 100 %)' : '(0.01 – 100 €)' }}
+                  {{ form.get('tipo')?.value === 'PORCENTAJE' ? '(0.01 – 100 %)' : '(0.01 – 100 S/)' }}
                 </span>
               </label>
               <input

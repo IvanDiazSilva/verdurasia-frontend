@@ -70,7 +70,7 @@ import { Categoria } from '../../../core/models/categoria.model';
         <!-- Precio + Unidad -->
         <div class="field-row">
           <div class="field">
-            <label class="label" for="precio">Precio (€) <span class="required">*</span></label>
+            <label class="label" for="precio">Precio (S/) <span class="required">*</span></label>
             <input
               id="precio"
               class="input"

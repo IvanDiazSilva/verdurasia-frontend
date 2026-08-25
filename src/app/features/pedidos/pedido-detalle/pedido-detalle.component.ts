@@ -56,7 +56,7 @@ import { AuthService } from '../../../core/services/auth.service';
           </div>
           <div class="meta-item">
             <span class="meta-label">Total</span>
-            <span class="meta-value meta-value--total">{{ pedido()!.total | number:'1.2-2' }} €</span>
+            <span class="meta-value meta-value--total">{{ pedido()!.total | number:'1.2-2' }} S/</span>
           </div>
           <div class="meta-item">
             <span class="meta-label">Fecha</span>
@@ -93,15 +93,15 @@ import { AuthService } from '../../../core/services/auth.service';
               <tr>
                 <td class="td--nombre">{{ item.productoNombre }}</td>
                 <td class="text-right">{{ item.cantidad }}</td>
-                <td class="text-right">{{ item.precioUnit | number:'1.2-2' }} €</td>
-                <td class="text-right td--subtotal">{{ item.subtotal | number:'1.2-2' }} €</td>
+                <td class="text-right">{{ item.precioUnit | number:'1.2-2' }} S/</td>
+                <td class="text-right td--subtotal">{{ item.subtotal | number:'1.2-2' }} S/</td>
               </tr>
             }
           </tbody>
           <tfoot>
             <tr>
               <td colspan="3" class="tfoot-label">Total</td>
-              <td class="text-right td--total">{{ pedido()!.total | number:'1.2-2' }} €</td>
+              <td class="text-right td--total">{{ pedido()!.total | number:'1.2-2' }} S/</td>
             </tr>
           </tfoot>
         </table>
