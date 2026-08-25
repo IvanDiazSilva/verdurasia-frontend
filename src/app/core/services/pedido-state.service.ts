@@ -118,7 +118,7 @@ export class PedidoStateService {
   validarCambio(estadoActual: EstadoPedido, nuevoEstado: EstadoPedido): { valido: boolean; mensaje?: string } {
     // Un pedido entregado no puede cambiar de estado
     if (estadoActual === 'ENTREGADO') {
-      return { valido: false, motivo: 'No se pueden cambiar estados de un pedido entregado' };
+      return { valido: false, mensaje: 'No se pueden cambiar estados de un pedido entregado' };
     }
 
     // Verificar si la transición está permitida
@@ -129,10 +129,10 @@ export class PedidoStateService {
 
     // Verificar si es un retorno no permitido
     if (nuevoEstado === 'PENDIENTE') {
-      return { valido: false, motivo: 'No se pueden retroceder a PENDIENTE' };
+      return { valido: false, mensaje: 'No se pueden retroceder a PENDIENTE' };
     }
 
-    return { valido: false, motivo: 'Transición de estado no permitida' };
+    return { valido: false, mensaje: 'Transición de estado no permitida' };
   }
 
   /**
