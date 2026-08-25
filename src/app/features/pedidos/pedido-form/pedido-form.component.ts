@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -332,9 +333,9 @@ export class PedidoFormComponent implements OnInit {
     });
     // Suscribirse a cambios de cantidad con takeUntilDestroyed para limpieza automática al destruir el componente
     const ctrlCantidad = grupo.get('cantidad')!;
-    takeUntilDestroyed(this.destroyRef)(ctrlCantidad.valueChanges).subscribe(() => this._totalVersion.update(v => v + 1));
-    // También guardamos referencia en el mapa para poder limpiar al eliminar la línea manualmente
-    this.suscripcionesCantidad.set(ctrlCantidad, takeUntilDestroyed(this.destroyRef)(ctrlCantidad.valueChanges));
+    // Guardamos la suscripción en el mapa para poder hacer cleanup manual en eliminarLinea()
+    const sub = takeUntilDestroyed(this.destroyRef)(ctrlCantidad.valueChanges).subscribe(() => this._totalVersion.update(v => v + 1));
+    this.suscripcionesCantidad.set(ctrlCantidad, sub);
     this.lineas.push(grupo);
   }
 

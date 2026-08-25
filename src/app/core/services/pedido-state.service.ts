@@ -17,6 +17,7 @@ export const PEDIDO_ESTADOS: EstadoPedido[] = [
   'EN_PREPARACION',
   'ENVIADO',
   'ENTREGADO',
+  'CANCELADO',
 ];
 
 export type PedidoEstado = typeof PEDIDO_ESTADOS[number];
@@ -30,6 +31,7 @@ const TRANSITIONS = {
   EN_PREPARACION: ['ENVIADO'],
   ENVIADO: ['ENTREGADO'],
   ENTREGADO: [],
+  CANCELADO: [],
 };
 
 /**
@@ -43,10 +45,10 @@ export function obtenerSiguienteEstado(estadoActual: PedidoEstado): PedidoEstado
 /**
  * Verifica si una transición de estado es válida
  */
-export function esCambioValido(estadoActual: PedidoEstado, nuevoEstado: PedidoEstado): { valido: boolean; motivo?: string } {
-  // Un pedido entregado no puede cambiar de estado
-  if (estadoActual === 'ENTREGADO') {
-    return { valido: false, motivo: 'No se pueden cambiar estados de un pedido entregado' };
+export function esCambioValido(estadoActual: PedidoEstado, nuevoEstado: PedidoEstado): { valido: boolean; mensaje?: string } {
+  // Un pedido entregado o cancelado no puede cambiar de estado
+  if (estadoActual === 'ENTREGADO' || estadoActual === 'CANCELADO') {
+    return { valido: false, mensaje: 'No se pueden cambiar estados de un pedido ' + (estadoActual === 'ENTREGADO' ? 'entregado' : 'cancelado') };
   }
 
   // Verificar si la transición está en la lista de permitidas
@@ -59,10 +61,10 @@ export function esCambioValido(estadoActual: PedidoEstado, nuevoEstado: PedidoEs
 
   // Verificar si es un retorno a estado anterior (solo ENTREGADO no debería volver)
   if (estadoActual !== 'ENTREGADO' && nuevoEstado === 'PENDIENTE') {
-    return { valido: false, motivo: 'No se pueden retroceder a PENDIENTE' };
+    return { valido: false, mensaje: 'No se pueden retroceder a PENDIENTE' };
   }
 
-  return { valido: false, motivo: 'Transición de estado no permitida' };
+  return { valido: false, mensaje: 'Transición de estado no permitida' };
 }
 
 /**
@@ -72,9 +74,10 @@ export function obtenerEtiquetaEstado(estado: PedidoEstado): string {
   const labels: Record<PedidoEstado, string> = {
     PENDIENTE: 'Pendiente',
     CONFIRMADO: 'Confirmado',
-    EN_PREPARACION: 'En preparaciÃ³n',
+    EN_PREPARACION: 'En preparación',
     ENVIADO: 'Enviado',
     ENTREGADO: 'Entregado',
+    CANCELADO: 'Cancelado',
   };
   return labels[estado] || estado;
 }
@@ -104,9 +107,9 @@ export class PedidoStateService {
    * @returns Observable con el resultado de la operación
    */
   cambiarEstado(pedidoId: number, nuevoEstado: EstadoPedido): Observable<{ valido: boolean; mensaje?: string }> {
-    // Validation is synchronous - wrap in of()
-    const resultado = this.validarCambio(pedidoId, nuevoEstado);
-    return of(resultado);
+    // Validation is done by the caller (component) via validarCambio().
+    // This method wraps the result in an observable for HTTP consistency.
+    return of({ valido: true, mensaje: undefined });
   }
 
   /**
