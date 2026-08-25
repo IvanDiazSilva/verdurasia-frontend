@@ -29,7 +29,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
     <div class="filters">
       <select class="select-filtro" (change)="onFiltroEstado($event)">
         <option value="">Todos los estados</option>
-        @for (e of estados; track e) {
+        @for (e of estados(); track e) {
           <option [value]="e" [selected]="e === estadoFiltro()">{{ etiqueta(e) }}</option>
         }
       </select>
@@ -71,7 +71,7 @@ import { ListStateComponent } from '../../../shared/components/list-state/list-s
                       (change)="onCambioEstado(p, $event)"
                       (blur)="cambiandoEstado.set(null)"
                     >
-                      @for (e of estados; track e) {
+                      @for (e of estados(); track e) {
                         <option [value]="e">{{ etiqueta(e) }}</option>
                       }
                     </select>
@@ -162,6 +162,8 @@ export class PedidosListComponent implements OnInit {
   errorEstadoId   = signal<number | null>(null);
   /** Mensaje de error del último cambio de estado fallido. */
   errorEstadoMsg  = signal<string | null>(null);
+  /** Lista de estados disponibles para los filtros y selects. */
+  estados         = signal<EstadoPedido[]>(ESTADOS_PEDIDO);
 
   readonly pedidoStateService = inject(PedidoStateService);
   readonly etiqueta = (e: EstadoPedido) => ESTADO_LABEL[e];
@@ -195,7 +197,7 @@ export class PedidosListComponent implements OnInit {
       this.guardandoEstado.set(null);
       this.cambiandoEstado.set(null);
       this.errorEstadoId.set(pedido.id);
-      this.errorEstadoMsg.set(validacion.motivo ?? 'No se puede cambiar el estado.');
+      this.errorEstadoMsg.set(validacion.mensaje ?? 'No se puede cambiar el estado.');
       return;
     }
 
