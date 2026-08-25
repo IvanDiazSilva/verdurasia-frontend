@@ -1,7 +1,7 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -272,6 +272,7 @@ export class PedidoFormComponent implements OnInit {
   private readonly pedidoService  = inject(PedidoService);
   private readonly clienteService = inject(ClienteService);
   private readonly productoService = inject(ProductoService);
+  private readonly destroyRef     = inject(DestroyRef);
   private readonly router         = inject(Router);
 
   clientes         = signal<Cliente[]>([]);
@@ -329,9 +330,11 @@ export class PedidoFormComponent implements OnInit {
       productoId: [null as number | null, Validators.required],
       cantidad:   [1, [Validators.required, Validators.min(1)]]
     });
-    // Suscribirse a cambios de cantidad y guardar referencia
+    // Suscribirse a cambios de cantidad con takeUntilDestroyed para limpieza automática al destruir el componente
     const ctrlCantidad = grupo.get('cantidad')!;
-    this.suscripcionesCantidad.set(ctrlCantidad, ctrlCantidad.valueChanges.subscribe(() => this._totalVersion.update(v => v + 1)));
+    takeUntilDestroyed(this.destroyRef)(ctrlCantidad.valueChanges).subscribe(() => this._totalVersion.update(v => v + 1));
+    // También guardamos referencia en el mapa para poder limpiar al eliminar la línea manualmente
+    this.suscripcionesCantidad.set(ctrlCantidad, takeUntilDestroyed(this.destroyRef)(ctrlCantidad.valueChanges));
     this.lineas.push(grupo);
   }
 
