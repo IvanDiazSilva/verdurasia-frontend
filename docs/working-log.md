@@ -855,3 +855,27 @@ ng build --configuration production → correcto, sin errores.
 - F4-04 — Refactorizar suscripciones dinámicas en PedidoFormComponent.agregarLinea().
 
 ---
+### Sesión
+- Fecha: 2026-08-25
+- Rama: f4-04-refactor-suscripciones-agregar-linea
+- Objetivo: Refactorizar las suscripciones dinámicas en PedidoFormComponent.agregarLinea() para prevenir memory leaks y usar takeUntilDestroyed.
+
+### Trabajo realizado
+- Análisis de pedido-form.component.ts y del método agregarLinea().
+- Sustitución de suscripción manual a cantidad.valueChanges por takeUntilDestroyed(this.destroyRef)(...).
+- Mantenimiento del mapa suscripcionesCantidad y de la lógica en eliminarLinea()/ngOnDestroy().
+- Verificación de que los 9 tests de PedidoFormComponent y los 80 tests totales pasan.
+
+### Validación
+- 9/9 tests de PedidoFormComponent en verde.
+- 80/80 tests del proyecto en verde.
+- PR fusionado en main.
+
+### Archivos modificados
+- src/app/features/pedidos/pedido-form/pedido-form.component.ts
+
+### Pendiente
+- Ninguno para esta microtarea.
+
+### Siguiente paso
+- Definir MT-10 (nueva funcionalidad) o continuar con otra microtarea pendiente del working-log.
