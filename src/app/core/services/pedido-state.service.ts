@@ -25,7 +25,7 @@ export type PedidoEstado = typeof PEDIDO_ESTADOS[number];
 /**
  * Transiciones válidas de estado.
  */
-const TRANSITIONS = {
+const TRANSITIONS: Record<EstadoPedido, EstadoPedido[]> = {
   PENDIENTE: ['CONFIRMADO'],
   CONFIRMADO: ['EN_PREPARACION'],
   EN_PREPARACION: ['ENVIADO'],
@@ -39,7 +39,7 @@ const TRANSITIONS = {
  */
 export function obtenerSiguienteEstado(estadoActual: PedidoEstado): PedidoEstado | null {
   const siguientes = TRANSITIONS[estadoActual];
-  return siguientes && siguientes.length > 0 ? siguientes[0] : null;
+  return siguientes[0] ?? null;
 }
 
 /**
@@ -60,7 +60,7 @@ export function esCambioValido(estadoActual: PedidoEstado, nuevoEstado: PedidoEs
   }
 
   // Verificar si es un retorno a estado anterior (solo ENTREGADO no debería volver)
-  if (estadoActual !== 'ENTREGADO' && nuevoEstado === 'PENDIENTE') {
+  if (nuevoEstado === 'PENDIENTE') {
     return { valido: false, mensaje: 'No se pueden retroceder a PENDIENTE' };
   }
 
