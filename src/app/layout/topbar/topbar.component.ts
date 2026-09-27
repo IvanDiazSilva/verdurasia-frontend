@@ -1,8 +1,8 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/services/auth.service';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-topbar',
@@ -10,10 +10,26 @@ import { Subject } from 'rxjs';
   imports: [CommonModule],
   template: `
     <header class="topbar">
-      <span class="topbar__section-title">{{ title }}</span>
+      <span class="topbar__section-title">{{ i18n.translate('TOPBAR.title') }}</span>
       <div class="topbar__actions">
         <span class="topbar__user">{{ auth.fullName() || auth.username() }}</span>
         <span class="topbar__relogio">{{ relogio }}</span>
+        <div class="lang-selector">
+          <button
+            class="lang-btn"
+            (click)="setLanguage('es')"
+            [class.active]="i18n.currentLanguage() === 'es'"
+            aria-label="Idioma español">
+            ES
+          </button>
+          <button
+            class="lang-btn"
+            (click)="setLanguage('en')"
+            [class.active]="i18n.currentLanguage() === 'en'"
+            aria-label="English language">
+            EN
+          </button>
+        </div>
         @if (auth.isAdmin()) {
           <span class="topbar__role topbar__role--admin">ADMIN</span>
         } @else {
@@ -80,15 +96,46 @@ import { Subject } from 'rxjs';
       color: #6b7280;
       margin-left: 0.5rem;
     }
+    .lang-selector {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .lang-btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lang-btn:hover {
+      color: #374151;
+      border-color: #9ca3af;
+    }
+    .lang-btn.active {
+      color: #1a1a1a;
+      background: #f3f4f6;
+      border-color: #9ca3af;
+    }
   `]
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent {
   readonly auth = inject(AuthService);
-  readonly title = 'VerdurasIA';
+  readonly i18n = inject(LanguageService);
 
   private relogioAtual = signal<Date>(new Date());
   private intervalId: number | null = null;
   private readonly destroy$ = new Subject<void>();
+
+  constructor() {
+    const lang = this.i18n.getSavedLanguage();
+    if (lang) {
+      this.i18n.setLanguage(lang);
+    }
+  }
 
   ngOnInit(): void {
     this.intervalId = window.setInterval(() => {
@@ -102,6 +149,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  setLanguage(lang: 'es' | 'en'): void {
+    this.i18n.setLanguage(lang);
   }
 
   get relogio(): string {

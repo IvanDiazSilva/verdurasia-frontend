@@ -1,10 +1,12 @@
-import { ApplicationConfig, APP_INITIALIZER, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, APP_INITIALIZER, provideBrowserGlobalErrorListeners, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthService } from './core/services/auth.service';
+import { registerLocaleData } from '@angular/common';
+import localeEsPe from '@angular/common/locales/es-PE';
 
 /**
  * Factory para APP_INITIALIZER.
@@ -30,6 +32,10 @@ export const appConfig: ApplicationConfig = {
       useFactory: initKeycloak,
       deps:       [AuthService],
       multi:      true
+    },
+    {
+      provide:    LOCALE_ID,
+      useValue:   'es-PE'
     }
   ]
 };

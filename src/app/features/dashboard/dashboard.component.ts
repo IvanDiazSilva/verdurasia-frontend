@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -8,6 +8,7 @@ import { PedidoService } from '../../core/services/pedido.service';
 import { OfertaService } from '../../core/services/oferta.service';
 import { Pedido, ESTADO_LABEL, EstadoPedido } from '../../core/models/pedido.model';
 import { Oferta } from '../../core/models/oferta.model';
+import { LanguageService } from '../../core/services/language.service';
 
 interface Tarjeta {
   titulo: string;
@@ -23,7 +24,7 @@ interface Tarjeta {
   imports: [CommonModule, RouterLink],
   template: `
     <div class="dash-header">
-      <h2 class="page-title">Dashboard</h2>
+      <h2 class="page-title">{{ i18n.translate('DASHBOARD.title') }}</h2>
       <span class="fecha">{{ hoy }}</span>
     </div>
 
@@ -61,13 +62,13 @@ interface Tarjeta {
       <!-- Últimos pedidos -->
       <section class="section">
         <div class="section__header">
-          <h3 class="section__title">Últimos pedidos</h3>
+          <h3 class="section__title">{{ i18n.translate('PEDIDOS.list') }}</h3>
           <a routerLink="/pedidos" class="link-ver-todos">Ver todos →</a>
         </div>
 
         @if (ultimosPedidos().length === 0) {
           <div class="state-msg">
-            No hay pedidos registrados aún.
+            {{ i18n.translate('PEDIDOS.list') === 'Pedidos' ? 'No hay pedidos registrados.' : 'No hay pedidos registrados aún.' }}
             <a routerLink="/pedidos" class="state-msg__link">Crear el primer pedido →</a>
           </div>
         } @else {
@@ -105,7 +106,7 @@ interface Tarjeta {
       <!-- Ofertas vigentes -->
       <section class="section">
         <div class="section__header">
-          <h3 class="section__title">Ofertas vigentes hoy</h3>
+          <h3 class="section__title">{{ i18n.translate('OFERTAS.list') }}</h3>
           <a routerLink="/ofertas" class="link-ver-todos">Ver todas →</a>
         </div>
 
@@ -305,6 +306,7 @@ export class DashboardComponent implements OnInit {
   private readonly clienteService  = inject(ClienteService);
   private readonly pedidoService   = inject(PedidoService);
   private readonly ofertaService   = inject(OfertaService);
+  readonly i18n = inject(LanguageService);
 
   tarjetas        = signal<Tarjeta[]>([]);
   ultimosPedidos  = signal<Pedido[]>([]);
@@ -312,6 +314,13 @@ export class DashboardComponent implements OnInit {
   pedidosPendientes = signal(0);
   cargando        = signal(true);
   error           = signal<string | null>(null);
+
+  /** Efecto que se suscribe al cambio de idioma y fuerza actualización de la vista. */
+  readonly languageEffect = effect(() => {
+    // Lectura de la signal para activar la suscripción reactiva.
+    // Esto asegura que el componente se actualice cuando cambia el idioma.
+    const _ = this.i18n.currentLanguage;
+  });
 
   readonly hoy = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
